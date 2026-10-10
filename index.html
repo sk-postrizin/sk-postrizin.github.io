@@ -1,0 +1,288 @@
+<title>SK Postřižín přípravky</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700;800&family=Source+Sans+3:wght@400;600;700&display=swap">
+<style>
+/* Layout: masthead with stamp date, then one block per team (next match → table → results → fixtures); two columns on wide screens */
+:root {
+  --bg: #f3f6f1;
+  --surface: #ffffff;
+  --fg: #16231a;
+  --muted: #5d6d61;
+  --line: #d9e2d8;
+  --pitch: #1f7a3d;
+  --pitch-soft: #e3f1e6;
+  --win: #1f7a3d;
+  --draw: #8a7a1c;
+  --loss: #b23a2b;
+  --us-row: #eaf5ec;
+  --display: "Barlow Condensed", "Arial Narrow", "Helvetica Neue", sans-serif;
+  --body: "Source Sans 3", "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #0f1612; --surface: #172119; --fg: #e5ede6; --muted: #98a89b; --line: #2a3a2e;
+    --pitch: #5cc47c; --pitch-soft: #1d3324; --win: #5cc47c; --draw: #d4c05a; --loss: #ef7d6d; --us-row: #1d3324;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #0f1612; --surface: #172119; --fg: #e5ede6; --muted: #98a89b; --line: #2a3a2e;
+  --pitch: #5cc47c; --pitch-soft: #1d3324; --win: #5cc47c; --draw: #d4c05a; --loss: #ef7d6d; --us-row: #1d3324;
+  color-scheme: dark;
+}
+* { box-sizing: border-box; }
+body { background: var(--bg); color: var(--fg); font-family: var(--body); font-size: 16px; line-height: 1.45; }
+.wrap { max-width: 1280px; margin: 0 auto; padding-inline: 16px; padding-block: 28px 48px; display: grid; gap: 28px; }
+header { display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: 12px 24px; border-bottom: 3px solid var(--pitch); padding-bottom: 14px; }
+.eyebrow { font-size: 13px; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); font-weight: 600; }
+h1 { font-family: var(--display); font-weight: 800; font-size: clamp(34px, 6vw, 52px); line-height: 1; margin: 4px 0 0; text-wrap: balance; text-transform: uppercase; letter-spacing: .01em; }
+.stamp { font-family: var(--display); font-weight: 700; font-size: 18px; color: var(--pitch); border: 2px solid var(--pitch); border-radius: 4px; padding: 4px 10px; white-space: nowrap; }
+.teams { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 360px), 1fr)); gap: 32px; }
+.team { display: grid; gap: 18px; align-content: start; min-width: 0; }
+.team-head { display: flex; flex-direction: column; gap: 6px; }
+h2 { font-family: var(--display); font-weight: 800; font-size: 30px; margin: 0; line-height: 1; text-transform: uppercase; }
+.comp { color: var(--muted); font-size: 14px; }
+.comp a { color: inherit; }
+.next { background: var(--pitch); color: #fff; border-radius: 6px; padding: 14px 16px; display: grid; gap: 4px; }
+.next .lbl { font-size: 12px; letter-spacing: .1em; text-transform: uppercase; opacity: .85; font-weight: 600; }
+.next .vs { font-family: var(--display); font-weight: 700; font-size: 26px; line-height: 1.1; }
+.next .when { font-size: 15px; opacity: .92; }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .next { color: #0f1612; } }
+:root[data-theme="dark"] .next { color: #0f1612; }
+h3 { font-size: 13px; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); margin: 0 0 8px; font-weight: 700; }
+.scroll { overflow-x: auto; }
+table { width: 100%; border-collapse: collapse; font-variant-numeric: tabular-nums; background: var(--surface); border: 1px solid var(--line); border-radius: 6px; overflow: hidden; }
+th, td { padding: 8px 6px; text-align: center; border-bottom: 1px solid var(--line); white-space: nowrap; }
+th { font-size: 12px; text-transform: uppercase; letter-spacing: .06em; color: var(--muted); font-weight: 700; }
+td.name, th.name { text-align: left; white-space: normal; }
+tr:last-child td { border-bottom: 0; }
+tr.us td { background: var(--us-row); font-weight: 700; }
+td.pts { font-family: var(--display); font-weight: 700; font-size: 19px; }
+.list { display: grid; background: var(--surface); border: 1px solid var(--line); border-radius: 6px; }
+.m { display: grid; grid-template-columns: 74px 1fr auto; gap: 4px 12px; align-items: center; padding: 9px 12px; border-bottom: 1px solid var(--line); }
+.m:last-child { border-bottom: 0; }
+.date { font-size: 13px; color: var(--muted); line-height: 1.25; font-variant-numeric: tabular-nums; }
+.teams-txt { min-width: 0; }
+.teams-txt b { font-weight: 700; }
+.ha { font-size: 12px; color: var(--muted); }
+.score { font-family: var(--display); font-weight: 700; font-size: 20px; font-variant-numeric: tabular-nums; display: flex; align-items: center; gap: 8px; }
+.pill { font-family: var(--body); font-size: 12px; font-weight: 700; width: 22px; height: 22px; border-radius: 50%; display: inline-grid; place-items: center; color: var(--bg); }
+.pill.V { background: var(--win); } .pill.R { background: var(--draw); } .pill.P { background: var(--loss); }
+.time { font-size: 14px; color: var(--muted); font-variant-numeric: tabular-nums; }
+.form { display: flex; gap: 4px; }
+footer { color: var(--muted); font-size: 14px; display: grid; gap: 6px; max-width: 75ch; }
+footer a { color: var(--pitch); }
+</style>
+
+<div class="wrap">
+  <header>
+    <div>
+      <div class="eyebrow">SK Postřižín · OP Mělník · podzim 2026</div>
+      <h1>Přípravky</h1>
+    </div>
+    <div class="stamp" id="stamp"></div>
+  </header>
+  <div class="teams" id="teams"></div>
+  <footer>
+    <div>Tabulky jsou dopočítané z výsledků na fotbal.cz: výhra 3 body, remíza 1, prohra 0; při rovnosti bodů rozhoduje rozdíl skóre. Mladší přípravka oficiální tabulku nevede, ber to jako orientační přehled.</div>
+    <div id="notes"></div>
+  </footer>
+</div>
+
+<script>
+const UPDATED = "10. 10. 2026";
+
+// Each match: [date, kick-off, home, away, homeGoals, awayGoals] — goals null = not played yet
+const GROUPS = [
+  {
+    team: "Postřižín",
+    label: "Starší přípravka",
+    id: "starsi",
+    comp: "OP starší přípravka, sk. E",
+    url: "https://www.fotbal.cz/souteze/turnaje/zapas/af3a7823-765e-427c-8f7d-c963943a8231",
+    matches: [
+      ["2026-09-06","10:00","Čechie Kralupy B","Nelahozeves B",8,6],
+      ["2026-09-06","11:00","Kralupy U11","Postřižín",16,9],
+      ["2026-09-10","18:00","Veltrusy B","Chvatěruby",6,10],
+      ["2026-09-12","10:00","Nelahozeves B","Kralupy U11",1,14],
+      ["2026-09-13","11:00","Veltrusy B","Čechie Kralupy B",14,9],
+      ["2026-09-13","15:00","Chvatěruby","Postřižín",17,5],
+      ["2026-09-20","10:00","Čechie Kralupy B","Chvatěruby",3,32],
+      ["2026-09-20","11:00","Kralupy U11","Veltrusy B",11,6],
+      ["2026-09-20","16:00","Postřižín","Nelahozeves B",7,12],
+      ["2026-09-27","11:00","Veltrusy B","Postřižín",12,12],
+      ["2026-09-27","15:00","Chvatěruby","Nelahozeves B",12,8],
+      ["2026-09-30","17:00","Čechie Kralupy B","Kralupy U11",6,12],
+      ["2026-10-03","10:00","Nelahozeves B","Veltrusy B",6,17],
+      ["2026-10-04","11:00","Kralupy U11","Chvatěruby",7,15],
+      ["2026-10-04","16:00","Postřižín","Čechie Kralupy B",16,4],
+      ["2026-10-10","10:00","Nelahozeves B","Čechie Kralupy B",10,8],
+      ["2026-10-11","15:00","Chvatěruby","Veltrusy B",null,null],
+      ["2026-10-11","16:00","Postřižín","Kralupy U11",null,null],
+      ["2026-10-18","10:00","Čechie Kralupy B","Veltrusy B",null,null],
+      ["2026-10-18","11:00","Kralupy U11","Nelahozeves B",null,null],
+      ["2026-10-18","16:00","Postřižín","Chvatěruby",null,null],
+      ["2026-10-24","10:00","Nelahozeves B","Postřižín",null,null],
+      ["2026-10-25","11:00","Veltrusy B","Kralupy U11",null,null],
+      ["2026-10-25","15:00","Chvatěruby","Čechie Kralupy B",null,null],
+      ["2026-10-31","10:00","Nelahozeves B","Chvatěruby",null,null],
+      ["2026-11-01","11:00","Kralupy U11","Čechie Kralupy B",null,null],
+      ["2026-11-01","16:00","Postřižín","Veltrusy B",null,null],
+      ["2026-11-08","10:00","Čechie Kralupy B","Postřižín",null,null],
+      ["2026-11-08","11:00","Veltrusy B","Nelahozeves B",null,null],
+      ["2026-11-08","15:00","Chvatěruby","Kralupy U11",null,null]
+    ]
+  },
+  {
+    label: "Mladší přípravka A",
+    id: "mladsi-a",
+    team: "Postřižín A",
+    comp: "OP mladší přípravka, sk. B",
+    url: "https://www.fotbal.cz/souteze/turnaje/zapas/44f1226a-fcdb-4f32-8505-5a01374f3b24",
+    matches: [
+      ["2026-09-06","17:00","Neratovice B","Nelahozeves",15,12],
+      ["2026-09-08","17:00","Lužec","Postřižín A",13,13],
+      ["2026-09-08","17:00","Velvary","Pšovka Mělník B",13,10],
+      ["2026-09-12","11:00","Pšovka Mělník B","Postřižín A",11,9],
+      ["2026-09-13","10:00","Nelahozeves","Lužec",9,4],
+      ["2026-09-15","17:00","Velvary","Neratovice B",19,13],
+      ["2026-09-19","10:00","Lužec","Velvary",15,14],
+      ["2026-09-20","13:30","Postřižín A","Nelahozeves",28,2],
+      ["2026-09-20","15:00","Neratovice B","Pšovka Mělník B",7,11],
+      ["2026-09-27","15:00","Neratovice B","Lužec",11,22],
+      ["2026-09-29","17:00","Velvary","Postřižín A",6,6],
+      ["2026-10-06","17:00","Pšovka Mělník B","Nelahozeves",10,14],
+      ["2026-10-01","16:30","Nelahozeves","Velvary",14,17],
+      ["2026-10-04","10:00","Lužec","Pšovka Mělník B",13,6],
+      ["2026-10-04","13:30","Postřižín A","Neratovice B",26,2],
+      ["2026-10-08","16:45","Nelahozeves","Pšovka Mělník B",12,11],
+      ["2026-10-10","11:00","Pšovka Mělník B","Velvary",6,12],
+      ["2026-10-11","10:00","Nelahozeves","Neratovice B",null,null],
+      ["2026-10-11","13:30","Postřižín A","Lužec",null,null],
+      ["2026-10-17","10:00","Lužec","Nelahozeves",null,null],
+      ["2026-10-18","15:00","Neratovice B","Velvary",null,null],
+      ["2026-10-20","17:00","Postřižín A","Pšovka Mělník B",null,null],
+      ["2026-10-24","11:00","Pšovka Mělník B","Neratovice B",null,null],
+      ["2026-10-25","10:00","Nelahozeves","Postřižín A",null,null],
+      ["2026-10-27","17:00","Velvary","Lužec",null,null],
+      ["2026-10-31","10:00","Lužec","Neratovice B",null,null],
+      ["2026-11-01","13:30","Postřižín A","Velvary",null,null],
+      ["2026-11-07","11:00","Pšovka Mělník B","Lužec",null,null],
+      ["2026-11-08","15:00","Neratovice B","Postřižín A",null,null],
+      ["2026-11-10","17:00","Velvary","Nelahozeves",null,null]
+    ]
+  },
+  {
+    label: "Mladší přípravka B",
+    id: "mladsi-b",
+    team: "Postřižín B",
+    comp: "OP mladší přípravka, sk. F",
+    url: "https://www.fotbal.cz/souteze/turnaje/zapas/83e15f8f-4911-4500-8adf-86824ea4ed8f",
+    matches: [
+      ["2026-09-05","10:00","Lobkovice","Jeviněves",1,26],
+      ["2026-09-05","10:00","Byšice/Tišice B","Libiš",11,10],
+      ["2026-09-06","11:00","Kralupy U8","Postřižín B",4,11],
+      ["2026-09-11","17:00","Libiš","Kralupy U8",18,4],
+      ["2026-09-13","10:00","Lobkovice","Byšice/Tišice B",5,15],
+      ["2026-09-13","12:30","Jeviněves","Postřižín B",11,9],
+      ["2026-09-19","10:00","Byšice/Tišice B","Jeviněves",8,10],
+      ["2026-09-20","16:00","Postřižín B","Libiš",11,4],
+      ["2026-09-23","16:30","Kralupy U8","Lobkovice",11,17],
+      ["2026-09-26","10:00","Lobkovice","Postřižín B",15,10],
+      ["2026-09-26","10:00","Byšice/Tišice B","Kralupy U8",26,7],
+      ["2026-09-27","12:00","Jeviněves","Libiš",14,20],
+      ["2026-10-02","17:00","Libiš","Lobkovice",23,2],
+      ["2026-10-04","11:00","Kralupy U8","Jeviněves",0,0],
+      ["2026-10-04","16:00","Postřižín B","Byšice/Tišice B",12,11],
+      ["2026-10-11","12:00","Jeviněves","Lobkovice",null,null],
+      ["2026-10-11","16:00","Postřižín B","Kralupy U8",null,null],
+      ["2026-10-15","17:30","Libiš","Byšice/Tišice B",null,null],
+      ["2026-10-17","10:00","Byšice/Tišice B","Lobkovice",null,null],
+      ["2026-10-18","11:00","Kralupy U8","Libiš",null,null],
+      ["2026-10-18","16:00","Postřižín B","Jeviněves",null,null],
+      ["2026-10-23","17:00","Libiš","Postřižín B",null,null],
+      ["2026-10-24","10:00","Lobkovice","Kralupy U8",null,null],
+      ["2026-10-25","12:00","Jeviněves","Byšice/Tišice B",null,null],
+      ["2026-10-30","17:00","Libiš","Jeviněves",null,null],
+      ["2026-11-01","11:00","Kralupy U8","Byšice/Tišice B",null,null],
+      ["2026-11-01","16:00","Postřižín B","Lobkovice",null,null],
+      ["2026-11-07","10:00","Byšice/Tišice B","Postřižín B",null,null],
+      ["2026-11-07","10:00","Lobkovice","Libiš",null,null],
+      ["2026-11-08","09:30","Jeviněves","Kralupy U8",null,null]
+    ]
+  }
+];
+
+const NOTES = ["Zápas Kralupy U8 – Jeviněves (4. 10.) je na fotbal.cz zapsaný 0:0, počítán jako remíza."];
+
+const DAYS = ["ne","po","út","st","čt","pá","so"];
+const fmtDate = d => { const x = new Date(d + "T12:00:00"); return `${DAYS[x.getDay()]} ${x.getDate()}. ${x.getMonth()+1}.`; };
+const esc = s => String(s).replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+
+function standings(matches) {
+  const t = {};
+  const row = n => t[n] ??= { name: n, z: 0, v: 0, r: 0, p: 0, gf: 0, ga: 0, pts: 0 };
+  for (const [, , h, a, hg, ag] of matches) {
+    row(h); row(a);
+    if (hg === null) continue;
+    for (const [me, gf, ga] of [[h, hg, ag], [a, ag, hg]]) {
+      const r = t[me];
+      r.z++; r.gf += gf; r.ga += ga;
+      if (gf > ga) { r.v++; r.pts += 3; } else if (gf === ga) { r.r++; r.pts += 1; } else r.p++;
+    }
+  }
+  return Object.values(t).sort((x, y) => y.pts - x.pts || (y.gf - y.ga) - (x.gf - x.ga) || y.gf - x.gf);
+}
+
+function render(g) {
+  const ours = g.matches.filter(m => m[2] === g.team || m[3] === g.team).sort((a, b) => (a[0] + a[1]).localeCompare(b[0] + b[1]));
+  const played = ours.filter(m => m[4] !== null);
+  const upcoming = ours.filter(m => m[4] === null);
+  const res = m => { const home = m[2] === g.team; const f = home ? m[4] : m[5], a = home ? m[5] : m[4]; return f > a ? "V" : f === a ? "R" : "P"; };
+  const opp = m => m[2] === g.team ? m[3] : m[2];
+  const next = upcoming[0];
+  const table = standings(g.matches);
+
+  return `<section class="team" id="${g.id}">
+    <div class="team-head">
+      <h2>${esc(g.label)}</h2>
+      <div class="comp"><a href="${g.url}" target="_blank" rel="noopener">${esc(g.comp)}</a></div>
+    </div>
+    ${next ? `<div class="next">
+      <div class="lbl">Další zápas · ${next[2] === g.team ? "doma" : "venku"}</div>
+      <div class="vs">${esc(next[2])} – ${esc(next[3])}</div>
+      <div class="when">${fmtDate(next[0])} v ${next[1]}</div>
+    </div>` : ""}
+    <div>
+      <h3>Tabulka</h3>
+      <div class="scroll"><table>
+        <thead><tr><th>#</th><th class="name">Družstvo</th><th>Z</th><th>V</th><th>R</th><th>P</th><th>Skóre</th><th>Body</th></tr></thead>
+        <tbody>${table.map((r, i) => `<tr class="${r.name === g.team ? "us" : ""}">
+          <td>${i + 1}.</td><td class="name">${esc(r.name)}</td><td>${r.z}</td><td>${r.v}</td><td>${r.r}</td><td>${r.p}</td>
+          <td>${r.gf}:${r.ga}</td><td class="pts">${r.pts}</td></tr>`).join("")}</tbody>
+      </table></div>
+    </div>
+    <div>
+      <h3>Naše výsledky</h3>
+      <div class="list">${played.map(m => `<div class="m">
+        <div class="date">${fmtDate(m[0])}</div>
+        <div class="teams-txt">${m[2] === g.team ? `<b>${esc(m[2])}</b> – ${esc(m[3])}` : `${esc(m[2])} – <b>${esc(m[3])}</b>`}</div>
+        <div class="score">${m[4]}:${m[5]} <span class="pill ${res(m)}" title="${{V:"výhra",R:"remíza",P:"prohra"}[res(m)]}">${res(m)}</span></div>
+      </div>`).join("")}</div>
+    </div>
+    <div>
+      <h3>Zbývající zápasy</h3>
+      <div class="list">${upcoming.map(m => `<div class="m">
+        <div class="date">${fmtDate(m[0])}</div>
+        <div class="teams-txt">${esc(opp(m))} <span class="ha">${m[2] === g.team ? "doma" : "venku"}</span></div>
+        <div class="time">${m[1]}</div>
+      </div>`).join("")}</div>
+    </div>
+  </section>`;
+}
+
+document.getElementById("stamp").textContent = "Stav k " + UPDATED;
+document.getElementById("teams").innerHTML = GROUPS.map(render).join("");
+document.getElementById("notes").innerHTML = NOTES.map(esc).join("<br>");
+</script>
