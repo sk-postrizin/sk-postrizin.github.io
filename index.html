@@ -104,7 +104,7 @@ footer a { color: var(--pitch); }
 </div>
 
 <script>
-const UPDATED = "20. 10. 2026";
+const UPDATED = "22. 10. 2026";
 
 // Each match: [date, kick-off, home, away, homeGoals, awayGoals] — goals null = not played yet
 const GROUPS = [
@@ -206,7 +206,7 @@ const GROUPS = [
       ["2026-09-26","10:00","Byšice/Tišice B","Kralupy U8",26,7],
       ["2026-09-27","12:00","Jeviněves","Libiš",14,20],
       ["2026-10-02","17:00","Libiš","Lobkovice",23,2],
-      ["2026-10-04","11:00","Kralupy U8","Jeviněves",0,0],
+      ["2026-10-04","11:00","Kralupy U8","Jeviněves",11,13],
       ["2026-10-04","16:00","Postřižín B","Byšice/Tišice B",12,11],
       ["2026-10-11","12:00","Jeviněves","Lobkovice",21,4],
       ["2026-10-11","16:00","Postřižín B","Kralupy U8",7,9],
@@ -227,7 +227,7 @@ const GROUPS = [
   }
 ];
 
-const NOTES = ["Zápas Kralupy U8 – Jeviněves (4. 10.) je na fotbal.cz zapsaný 0:0, počítán jako remíza."];
+const NOTES = [];
 
 const DAYS = ["ne","po","út","st","čt","pá","so"];
 const fmtDate = d => { const x = new Date(d + "T12:00:00"); return `${DAYS[x.getDay()]} ${x.getDate()}. ${x.getMonth()+1}.`; };
