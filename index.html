@@ -104,7 +104,7 @@ footer a { color: var(--pitch); }
 </div>
 
 <script>
-const UPDATED = "8. 11. 2026";
+const UPDATED = "9. 11. 2026";
 
 // Each match: [date, kick-off, home, away, homeGoals, awayGoals] — goals null = not played yet
 const GROUPS = [
@@ -143,7 +143,7 @@ const GROUPS = [
       ["2026-11-01","11:00","Kralupy U11","Čechie Kralupy B",23,3],
       ["2026-11-01","16:00","Postřižín","Veltrusy B",7,19],
       ["2026-11-08","10:00","Čechie Kralupy B","Postřižín",9,23],
-      ["2026-11-08","11:00","Veltrusy B","Nelahozeves B",null,null],
+      ["2026-11-08","11:00","Veltrusy B","Nelahozeves B",5,7],
       ["2026-10-23","16:45","Chvatěruby","Kralupy U11",7,5]
     ]
   },
@@ -227,7 +227,7 @@ const GROUPS = [
   }
 ];
 
-const NOTES = ["Kralupy U8 – Libiš (18. 10.): na fotbal.cz kontumováno 0:3, původně zapsáno 30:4.", "Neratovice B – Postřižín A (8. 11.): 4:30 podle trenéra, na fotbal.cz zatím nepotvrzeno."];
+const NOTES = ["Kralupy U8 – Libiš (18. 10.): na fotbal.cz kontumováno 0:3, původně zapsáno 30:4."];
 
 const DAYS = ["ne","po","út","st","čt","pá","so"];
 const fmtDate = d => { const x = new Date(d + "T12:00:00"); return `${DAYS[x.getDay()]} ${x.getDate()}. ${x.getMonth()+1}.`; };
