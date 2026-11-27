@@ -27,11 +27,13 @@ header { display: flex; flex-wrap: wrap; align-items: flex-end; justify-content:
 .eyebrow { font-size: 13px; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); font-weight: 600; }
 h1 { font-family: var(--display); font-weight: 800; font-size: clamp(34px, 6vw, 52px); line-height: 1; margin: 4px 0 0; text-transform: uppercase; }
 .stamp { font-family: var(--display); font-weight: 700; font-size: 18px; color: var(--pitch); border: 2px solid var(--pitch); border-radius: 4px; padding: 4px 10px; white-space: nowrap; }
-.intro { max-width: 70ch; margin: 0; display: grid; gap: 8px; }
+.intro { margin: 0; display: grid; gap: 12px; }
+.tips { display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap: 10px; }
+.tips div { background: var(--surface); border: 1px solid var(--line); border-top: 3px solid var(--pitch); border-radius: 6px; padding: 10px 12px; font-size: 15px; line-height: 1.35; }
+.tips b { display: block; font: 800 17px var(--display); text-transform: uppercase; letter-spacing: .02em; color: var(--pitch); margin-bottom: 2px; }
 .intro p { margin: 0; }
 .deadline { font: 700 20px var(--display); text-transform: uppercase; letter-spacing: .02em; color: #0f1612; background: #5cc47c; border-radius: 6px; padding: 8px 12px; justify-self: start; }
 .deadline b { font-weight: 800; }
-.sleva { font-size: .95em; }
     .joma { border-left: 4px solid var(--pitch); padding: 4px 0 4px 10px; }
 .intro a, .meta a.sg { color: var(--pitch); }
 .jump { position: sticky; top: 0; z-index: 5; display: flex; flex-wrap: wrap; gap: 8px; padding: 10px 0; background: var(--bg); }
@@ -131,11 +133,13 @@ footer { color: var(--muted); font-size: 14px; }
 
   <div class="intro">
     <p class="deadline" id="deadline">Objednávky přijímáme do <b>31. 12. 2026</b>.</p>
-    <p class="joma"><b>Hlavní klubové oblečení je Joma</b> (vycházková kolekce). Věci z Decathlonu na této stránce jsou doplněk navíc – jen na tréninky.</p>
-    <p>U každého produktu vyplňte počet kusů v jednotlivých velikostech, dole doplňte kontakt a klikněte na <b>Odeslat objednávku</b>.</p>
-    <p>Ceny jsou z Decathlonu a u tréninkových věcí už obsahují <b>potisk klubového loga</b> (odhad 60 Kč za kus, přesnou cenu potisku upřesníme) – všichni budou mít stejné. U klubových věcí (šála, čepice) cenu ještě upřesníme.</p>
-    <p class="sleva"><b>Máme domluvenou slevu</b> – ceny na stránce jsou proto jen orientační a výsledná cena bude nižší. Přesnou částku budeme znát až z faktury.</p>
-    <p><b>Velikost:</b> dětské oblečení se vybírá podle výšky dítěte (změřte ho; když je na hranici, vezměte raději větší), štulpny podle čísla bot. Podrobné tabulky najdete v <a href="https://www.decathlon.cz/size-guide" target="_blank" rel="noopener">průvodci velikostí Decathlonu</a>.</p>
+    <p>Vyberte počty kusů podle velikostí, dole vyplňte kontakt a <b>odešlete</b>.</p>
+    <div class="tips">
+      <div><b>Joma je hlavní</b>klubové (vycházkové) oblečení. Decathlon je doplněk jen na tréninky.</div>
+      <div><b>Cena vč. loga</b>potisk odhadem 60 Kč/ks, upřesníme. Šála a čepice zatím bez ceny.</div>
+      <div><b>Máme slevu</b>výsledná cena bude nižší – přesně ji budeme znát až z faktury.</div>
+      <div><b>Velikost</b>děti podle výšky (raději větší), štulpny podle bot. <a href="https://www.decathlon.cz/size-guide" target="_blank" rel="noopener">Průvodce velikostí</a></div>
+    </div>
   </div>
   <nav class="jump" id="jump" aria-label="Sekce"></nav>
 
@@ -160,7 +164,7 @@ footer { color: var(--muted); font-size: 14px; }
       <label>E-mail *<input name="email" type="email" required autocomplete="email"></label>
       <label>Jméno hráče / tým<input name="hrac" placeholder="např. Tomáš, minipřípravka"></label>
     </div>
-    <label>Poznámka<textarea name="poznamka" placeholder="např. jméno a číslo na dres"></textarea></label>
+    <label>Poznámka<textarea name="poznamka"></textarea></label>
     <div class="summary" id="summary"></div>
     <div class="total"><span>Předběžně celkem <small>vč. potisku loga, před slevou</small></span><span id="total">0 Kč</span></div>
     <input type="text" name="_honey" style="display:none" tabindex="-1" autocomplete="off">
@@ -341,7 +345,7 @@ const qty = {}; // key "productId|size" -> count
 let coachUnlocked = false;
 
 // Coach-only products are shipped encrypted (AES-GCM, key from the coach password via PBKDF2) so they are not readable without it
-const COACH_BLOB = "VIT2ilIbhEV1wrlqXJ1MBNQg0yp3zaiG4zBfkXpXoKiNEVZyEOUqAbo34vNc87l94eUDQoXL77QW36K6TlAmkNeSIW4pwgOrSPNv7rKhBA0ppQCmNY2dBoK3snlmjxPvdh0P8xmcmOlU2XcoizIIryLDkC3PtTApmcimDKY+GEpwRuCG/hk9o+1yP2toKP1wd3LhhNfloWyfoAppSsTbO0BET5q3kowYNZ0G5lX8lXoj6Dd/4hGj52Y6Evq3SKsXseE4pUhtNA80Ut25HCfXrMjQQ5fiWo3Y4lfIZBsCiT7yggbOHm7tSTpbI1R6hyUl0uocp8xpKvHfs4tAdrc52JmetLQDkdcXgiGo3amu3IvovCVrgUDx5L367bE0khgXVy5wKVffTa8wiWfiKTfLt39x97BhejQg2h/qnACojw7H3kUtcUMU0v7XCdXDukO3A3glw3D6HdlkOJQmByqQtM4Bnm5fuswf1M81S4IRoo0ObvFhjC59hiCR+4XcDkkfy4R6fdyspIExsFuEuC7Wk7S+2xunMJFIf9YQ3CKen/K1efPEkrytPylFOS9QAhWoQ5htyrJNjZu4neyhJlokgpodFK9mNCkZry9VzvKKyoHQT4gebEWWvngFe3WOUt0GkvGX1wGaHb8zKhcDsatg+CMHTg+9zG0bR1bWp6gj9wobIUyt+FFsSiqgNoPfNLWGvR7LQrAZJWLfZPgRR0xTtpcAd8HskEhWFzYg+o+iRzcOZhP5FQR2qItRv353rDwjjz9eNtDgliGxPNBgK8luhcxFKr4Pun8ZZvEXYvu6IJ+VLAR+4KMJ2LLejlR0EdV9JEfA9WbWFFsUc5L+6O/BISdJLdmP2Mt8qK4GBqa9EvELxdjq+LYgvuSVRCYTkuyRsPcqC1pKMzfqoIHayWXXzVLmSPUH8nJRjavD5730bX1pKELENHOzpAJZdcy9Mvkd5TE5G1wZV/dUsQDspT2ewl6JY+FmhVg5PDlugeTp0S7jyZTHaGuRfT4wKiOWu1ohfbYnWp5lw2p3uwx2Cw1H0J/zbSLkA9T3jWrsgSQFu9A+OKxozdu2u3jInzvM8QCFedlq/8Kkx2idPWkS6lQVQsY2t2f6X/UcO2Lq1AYeNWb1PawgLa4qVRG1m61wRLNer3ptPZCCaz9zewkuUja36AhCqrnnGUbA+NC0qNYAKlNG9dJFCksNWYhX+jggMy+rEAdcCg+pfkuZApqmzn3sbHq/wIpOJ0SuCT1URmF+RWvfz5VSrq0tP3+fIRau3YzPuyNJsJY4dMylQ1qQPRFHFPONr6a7eXUQDDIrhUNonIuq1+PAwnQeW0p1yAxUJsBFBNg63+VfXvAC/zgq+e9skIgNl2nVHb1tUnV/URwAcLgduoxWm0AKPIdcVT/ufwoSc7HKfulwqjA2NKkyMHCWDf26TINRd67hwzqLsCQG3RljWWtBMB5eGN2jyYDJG0TAh8gXZtEQfxcmY5Ap";
+const COACH_BLOB = "lJ6e9yF7+jOK4zaW6jx7T5bhl2AWI4lHaT55zvNb+Cx3j7Mc1xPPXAaTahTHBh3zrKzE2wAXwmeNt4gMIkKwVJIf/aL3gUYQP+iJlS3T09njdgSwk3eiLhrHktcRxdp95IcvENP3S22zvBHgRp6ZnJbQDxtMSIm/Vl7JKJr7oRrB4OyqRUdDQqcpQxZeXzlIcTrhXqiNnnF3fC3iU2eeKt2iVoDnFRStYGp3G92/XriGwowVVFpPzrynhCBW/ARgbYHxv16YdPrtyyBjblW0b08YyPyU2Gnh/IaViIRDmTMtVhRxZmpjsg15zrcuY4UhCtndiKHYg1c+MM/xdBgzyeSA44mMjwRxfuzrX28rpJLqRHPqtKpsIklcKFQ5vSoMkCwt46RCKahJKGSWXS7nm3IxECBC3Ca3lh0KWyvjLu8A/iDXMQtAPE3wsYU/BUI5o5q7inLzeMS887RaZwrzGFKKK0TBGxLJp+Rc8BY5hpBwKctRUbkJv/mThNX1IveuIyWHeGoB1XqvVr4mZHyPcbT3wtXwIUmlixDVdKHkY2RRTZNWT+FMN/SijVw/OMDEsSQL0/njeP2HyZJep4vkAaiXMIWLPBsgY8nsppiUZXD5rVK3MSTd6BAxaYfdyf3tqiI73Cjcq09htAHJKXmqDVPA141QQYNkalvnqIe6xwsssacCZgIo71AEpBReXx/GpoBGgyplhUKFcxp6BBW8hW2JC+3EqDXKwq2OibzpEOGUoY4EPXWjp1C48FMPavJOCBdyUgZgvA9A/s2xGviAPR2BmKi2AHV89TexasFkD0WvCOIrEn5c+VhR+WvOuKNdxGIKpK6TemtqFR4xOpS3dRiFbXmZC4MCG2FwL8m94DPIn5X2yul9M3xG27k5qAq7+Oi7nhPpSdXkaPqbX2In1XvVMbH/Hmi5xCeB3eCEBuoZwTfSNwIu2A8jnxKIq8u8KASImB+TIxYZlyJnrBmuaE8FyLZoBG6Qq5RSxvZEPo9l9GeaMC8nEKX5xPZt1BJ1CT4RPgem0xrKIyp6A6otMflgWUwn5w3rRtakHOdrpppVw7tfGu9aNP4MBxh6F8LH7pEEMROkxYRGNgxM1MSBbgDE1OiV5cIPCYZMrxirST8KprCtnHLiciq1+VPOlzShoYa+Ih8eXxdu1idGRP5yGdCAGsgEBaMYNahUtVoI4CLOAeJyjNy73BJ+bcF+WG4+XVGDvHCNSMs00YGdKbc+0+wb1J/P13lS9MTGj8MZ2GjxVt1LJkPjUo8FEvPDLXRIDFUNqYywkAE5+Q1PIjDSlk/AJC+w9Jz/7T+DHh1KmU89LckN6925/oBuZsZLgVvbQSVlgELBtl58hNVrvMsFP8kTeFWqH6UtcVTXG8obMCg+Nk7rkR5MCiioy46ccN06gh2QFgtudNHO/fhYQMEbvuQ5FXJqYY+n5z73ji/XLIEuQqPbApOD+GKWxflkf4Uf9ptVFBNEqTwzWyfb";
 const normPass = s => s.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().replace(/\s+/g, "");
 async function unlockCoach(pass) {
   const raw = Uint8Array.from(atob(COACH_BLOB), c => c.charCodeAt(0));
