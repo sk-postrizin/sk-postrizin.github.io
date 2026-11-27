@@ -31,6 +31,8 @@ h1 { font-family: var(--display); font-weight: 800; font-size: clamp(34px, 6vw, 
 .intro p { margin: 0; }
 .intro a, .meta a.sg { color: var(--pitch); }
 .jump { position: sticky; top: 0; z-index: 5; display: flex; flex-wrap: wrap; gap: 8px; padding: 10px 0; background: var(--bg); }
+.jump[hidden] { display: none; }
+.summary .row span:last-child { white-space: nowrap; }
 .jump a { font: 700 16px var(--display); text-transform: uppercase; letter-spacing: .03em; color: var(--fg); text-decoration: none; border: 2px solid var(--pitch); border-radius: 999px; padding: 4px 14px; }
 .jump a:hover, .jump a.go { background: var(--pitch); color: #fff; }
 #cats h2 { scroll-margin-top: 64px; }
@@ -310,7 +312,7 @@ const qty = {}; // key "productId|size" -> count
 
 document.getElementById("stamp").textContent = "Ceny k " + UPDATED;
 
-const slug = c => "cat-" + c.normalize("NFD").replace(/[^a-zA-Z0-9]+/g, "-").toLowerCase();
+const slug = c => "cat-" + c.normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/[^a-zA-Z0-9]+/g, "-").toLowerCase();
 function render() {
   const cats = [...new Set(PRODUCTS.map(p => p.cat))];
   document.getElementById("jump").innerHTML = cats.map(c => `<a href="#${slug(c)}">${esc(c)}</a>`).join("") + `<a class="go" href="#form">Objednat ↓</a>`;
