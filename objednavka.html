@@ -84,7 +84,7 @@ footer { color: var(--muted); font-size: 14px; }
     <div class="stamp" id="stamp"></div>
   </header>
 
-  <p class="intro">U každého produktu vyplňte počet kusů v jednotlivých velikostech, dole doplňte kontakt a klikněte na <b>Odeslat objednávku</b>. Ceny jsou převzaté z Decathlonu, potisk se platí zvlášť. Velikosti dětského oblečení jsou podle výšky dítěte.</p>
+  <p class="intro">U každého produktu vyplňte počet kusů v jednotlivých velikostech, dole doplňte kontakt a klikněte na <b>Odeslat objednávku</b>. Ceny jsou převzaté z Decathlonu, potisk se platí zvlášť. Velikosti dětského oblečení jsou podle výšky dítěte, štulpny podle čísla bot.</p>
 
   <section id="cats"></section>
 
@@ -205,6 +205,19 @@ const PRODUCTS = [
     url: "https://www.decathlon.cz/p/detska-dlouha-fotbalova-prosivana-nepromokava-parka-trx-cerna/324868/c382c383m8584437",
     img: "https://contents.mediadecathlon.com/p2776176/k$f3a3873b810e0a1fb2727c71e1f3cc3c/picture.jpg?format=auto&f=800x0",
     sizes: KIDS_SIZES
+  },
+  {
+    id: "viralto-stulpny",
+    cat: "Děti",
+    name: "Dětské štulpny Viralto proužkované",
+    brand: "Kipsta",
+    color: "kouřová černá",
+    price: 119,
+    print: "bez potisku",
+    note: "Velikost podle čísla bot.",
+    url: "https://www.decathlon.cz/p/detske-stulpny-viralto-prouzkovane/309733/c382m8560703",
+    img: "https://contents.mediadecathlon.com/p2970422/k$dfde65e557354c88bf6e0320ec79d2f2/picture.jpg?format=auto&f=800x0",
+    sizes: [["27/30","číslo bot"],["31/34","číslo bot"],["35/38","číslo bot"]]
   }
 ];
 
