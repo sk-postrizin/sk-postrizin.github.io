@@ -198,7 +198,7 @@ const unit = p => p.price == null ? null : p.price + (printed(p) ? PRINT_PRICE :
 
 // Product catalogue — add new items here. price = Decathlon price in Kč, print = price of printing (text), sizes = [label, hint]
 const KIDS_SIZES = [["113–122 cm","5–6 let"],["123–130 cm","7–8 let"],["131–140 cm","8–9 let"],["141–150 cm","10–11 let"],["151–160 cm","12–13 let"],["161–172 cm","14–15 let"]];
-const JOMA_SIZES = [["6XS","100–108 cm"],["5XS","109–117 cm"],["4XS","118–128 cm"],["3XS","129–140 cm"],["2XS","141–152 cm"],["XS","153–164 cm"],["S","dospělí"],["M","dospělí"],["L","dospělí"],["XL","dospělí"],["2XL","dospělí"],["3XL","dospělí"]];
+const JOMA_SIZES = [["6XS","100–108 cm"],["5XS","109–117 cm"],["4XS","118–128 cm"],["3XS","129–140 cm"],["2XS","141–152 cm"],["XS","153–164 cm"]];
 const JOMA_SOCKS = [["31–34","bota 31–34"],["35–38","bota 35–38"],["39–42","bota 39–42"],["43–46","bota 43–46"]];
 const sets = []; // added Joma sets: [{ triko: "3XS", ... }]
 const PRODUCTS = [
@@ -359,7 +359,7 @@ const PRODUCTS = [
 
 // Orders are e-mailed through FormSubmit; addresses are encoded so bots cannot scrape them from the page
 const TO = atob("bHVreWtlQGdtYWlsLmNvbQ==");
-const CC = atob("THVrYXMuc2xlaG9mZXJAZW1haWwuY3o=");
+const CC = atob("THVrYXMuc2xlaG9mZXJAZW1haWwuY3osYWRhbS5rcm91cGEucGNyQGdtYWlsLmNvbQ==");
 const ENDPOINT = "https://formsubmit.co/ajax/" + TO;
 // Every order is also stored as a row in the Google Sheet behind this Google Form
 const SHEET_FORM = "https://docs.google.com/forms/d/e/1FAIpQLScMfRqI-5uX6l-2-lgOx8pM0om-AFLYWKdg0xP8WNx1yG-nMg/formResponse";
@@ -372,7 +372,7 @@ const qty = {}; // key "productId|size" -> count
 let coachUnlocked = false;
 
 // Coach-only products are shipped encrypted (AES-GCM, key from the coach password via PBKDF2) so they are not readable without it
-const COACH_BLOB = "bBOSbCYEDJC5krJPcOySUjTnQhasFipbj2F5oDZcxERhW/ZhsxuhStSRiGgJ3T4515udA9C5Q1cMBTScg1mFIl7NJ20iKlqB3MmPcsTyecS8mXcIVU+7/5JB6HaQrLbDhd2ncoSHSBYDwWf98mOIntG56J2b0HqF78S+5Jc7vTNs4Bnw3jaCYQNe1Y0APRZ3lQRLAljtP+F4eBH/m6YxCeQL0TqIpsR8mKJxTuRT43fIXVDaJlfqEwfpb3X9SDMVPXIrlj3PD1Kgb8PoF+kKufyd5oxdLb13yf5R+6MclR9y39vgGWLwt3sNAteOXtCKft3gRy/j+UyCQKxhsHB+QiIXyoE22J/l2QNBU8vQYOpgfI5+fxKltm7F3RGlzG6lwoA0h8uDrSnz9kjRlqv47d9ItZ4ZDyufyYVmLzugVYfLW4Olx8AHioyTwY3l9HxOVXihXPSOGhPnB7yo1ZTlyz3lXhVV/xvLBhyLs+3BSBQkYFiZf9KsUA9W9kA+VMrtzTk+nJKtulQ/1gBhn2QcXIIwFyNzGoXNQEbhtOhGVEAtgvji933LoLvMrMMq9Y1iA/wB/OFU2WgaTF6y2k6xUleYnInIsvLEDiFbAjOSbS+lUhBLPQQ5YM3kxDlhpQ3dSUTy0DtFrd97seDor7Snxc4jkIO0rha99ArQDyhZ3K1r5bxhR8xxZQeOaeIc9wJQo66ePTVGBNpGPLiTICwVCFurZ2dgrl1dsq0JsC023IoghS6ncz34dVyRsKFo2T6zpFeP+vVyj0I6e74hcaAJqVwziXhr2Y3wV+GLWa9s0UkWSltYVY/UG9x0nc17kkcPtUwVDYn/Su/m/1XzszgRJCv9+Yo90msXupeuw6dSDg2E1CyFVzjO87LZ5fBbYMkm8W68a1l/K/wm/aYVfwVRPuLacY7fT2yjAX9inyz+Iv2U72aVzkJtHiigp3fBujpa9R5kgh5aX6al0ZUQKQhoUwT2/3I0uzyv3QkU7NvGQGoriHGmuP99WktiRrQVyosZjSzjiRe+cT1x7gANZBRW+k4bMLD7KHKwAiypQcwnP0Kplyc5pQ49j1tnm2YQ6qYS3kUjVCvwywMzhW67ajvqisV+e6tgfsiMgqqU5fkZ9pdG7iZI9eBq1rf3jaDZvGnl5otn1rAnUJN4Jw1bOfo/ZL12MijWKP1PBRpR2hM51Ns1NnG8/ddDvE0jTXlhOkL+87Qr1g4dTXiXfRflLqu4u4KbQBYkU9jmJ9PUvdEbuq64Z5+iCzshaZpzjYQZmgB2rBwn7YTzAsKGGBke1ZWvks5Gu8vo8gfbmwigCAzEMf2ZeCYEnrI61+rQxWG7smqO0K2iPup4dW2FsVE7TBuC0jID69N2RDvqRgT3dle91vgMnoFbG2zXjrvs/3yYFQZJ0VbTDC1K+yMxxCJMOpSXcap/Iaqq9yJbqsBLRgqs81auQPMNgTdfHnk42F+ooMz9p+5DgD8H+JGUjLa1";
+const COACH_BLOB = "s6fhTtT6hF7fc7yBACTwMwk+cEKsZbb4pppSxExiyfbtY9Vc0ZE/bcTPKBpcZVjU4cRo9T1DyCYct00wfrILxKpyj7sKhoPAgbBF4jGYFu/qVWk4L5MYY+R+eNjOvsRpYcljS2HPzE7luVjfksEITVwMg+oGgGH3sWvNHupDBYhh2X8D/AVXXVNF6KubhUY6Qo9TCM9e92ZgWqhnNwGC/2AMMdVXJ0cv+BLvpqe1PiqbioCErnhRCR18lYKZ2svHo8Xf+HOBIrNmcNEykpMJq4yeXxtFKjiVzTTrcjPi+BDh+x2OsG2CU4fyUbmZfqtOK/5vldqnxlAMzDNGlCqd1GPfghzNeJYhq1t337S/VSOfh+LWlj42dodkgmJfmyQeQfTbvRwuOuMC2Tx6Tm+5bXYR+E11o181SpQlfXF+mgPbobGXqAtpS9EiZMlpxNVcBI9dAX7HdZ81OkarQlEVlc3pxC2IOv37NzRgQbeNhrP9Iypm7N1OQHfIGEKHSplWQvIi1/0HZ0LKB1y1s0ABpPqzLF9nYSezs1HcifYZmW14EtYIjX5pjVDDWczt5cXcdKWmNiixvWHb4+8elLbr1OzIv9W08HF4RFMFK9hUG/zOjmasZkQovMFBlMryk6lOptX/b0ISNMcRGnl2hsK/9p5r3aZdiFCd3wLn9vEFkQEMyAMWJkAeVD9623xsYtw1lBEXtiC9KYdi6tlncQOCbwh4JygGoiDVQQIchV7TGu8Kd6on/49RHVZLhwxZA3rLmeAV7WQDlyzGYQU4UXfCd446DiS5KPFN+d1s5aRS0TBAnR+9OccSUPDPyETqLRU1mwtxiUCI8CITcYtvJaUzfqXhWcw0W1LcUfne3Ka6GJYvgRru5xTdACF0XEp4ax0tMRVCXObYz3JDT8XP4qicryFOWIzWflEiOz/NRUd5xQVCcdnoDdPnRqcYxQJ0wImBKTtOmw5tlTCKIl/xBIJOLezNmG6V6Z8JFh5YbvGmK4+2RTxIEBXdGIlSA52ZIm7uPyUefZiX0egk7waeLtyXEU2vQ5BMlYGi+EmpA4ko6B3EkmolNjHvzRFh0q6N5NcU+OZW7Ojpq5RTSQvi/OhmnRshGltGp2JRazbyAQzFKpCkOSdp+FK/j4iIf1gGjprqF/gMiNvKV9fsbl0Xs5HZ8BqxX+l3mpITyHQW9pOShq2SwyfSHeR5gQ1EvTGGESXZJKbTv5UvGvjdCYhdRKht1Lm8lPjCRACs2SptpwFf06iR9NTdtLRgiqRc3KhqD5PhqgWgP99RXXKjmAjH9RIkrXiWCFkqWFIJL1R2XUfI93t83uKZ+4IBwPAvXs7wqs/Dv5h/+oDh2dkxpGL/6Jd4slxQcT3DvBsI3VjDEZoT1uG48yIUrH1Tq5tF3j32DTn6Ieb+BGW4AWeEn6nNDZ0LdZJYy3IntMkC0mwsT771dLQWA3hef1Vu4bwFM4gumqCAKQg6HN2AvJ7yShAk";
 const normPass = s => s.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().replace(/\s+/g, "");
 async function unlockCoach(pass) {
   const raw = Uint8Array.from(atob(COACH_BLOB), c => c.charCodeAt(0));
