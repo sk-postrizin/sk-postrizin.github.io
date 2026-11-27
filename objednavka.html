@@ -127,7 +127,7 @@ footer { color: var(--muted); font-size: 14px; }
 
   <div class="intro">
     <p class="deadline" id="deadline">Objednávky přijímáme do <b>31. 12. 2026</b>.</p>
-    <p class="joma"><b>Hlavní klubové oblečení je Joma.</b> Věci z Decathlonu na této stránce jsou doplněk navíc – jen na tréninky.</p>
+    <p class="joma"><b>Hlavní klubové oblečení je Joma</b> (vycházková kolekce). Věci z Decathlonu na této stránce jsou doplněk navíc – jen na tréninky.</p>
     <p>U každého produktu vyplňte počet kusů v jednotlivých velikostech, dole doplňte kontakt a klikněte na <b>Odeslat objednávku</b>.</p>
     <p>Ceny jsou z Decathlonu a u tréninkových věcí už obsahují <b>potisk klubového loga (60 Kč)</b> – všichni budou mít stejné. U klubových věcí (šála, čepice) cenu ještě upřesníme.</p>
     <p><b>Velikost:</b> dětské oblečení se vybírá podle výšky dítěte (změřte ho; když je na hranici, vezměte raději větší), štulpny podle čísla bot. Podrobné tabulky najdete v <a href="https://www.decathlon.cz/size-guide" target="_blank" rel="noopener">průvodci velikostí Decathlonu</a>.</p>
@@ -336,7 +336,7 @@ const qty = {}; // key "productId|size" -> count
 let coachUnlocked = false;
 
 // Coach-only products are shipped encrypted (AES-GCM, key from the coach password via PBKDF2) so they are not readable without it
-const COACH_BLOB = "mSuVdhKfqd7XY2URxFHEA3BNo0CNyqFhY+ZGgljpsEuEcuMM/v3BYWvAWFoUclhycp5RdAfKXMBC7jw30WO/29l1W6XgF1uUWEX6K2aKuMXyQP+LWive5Gk/XrX71gyP5/WK3Ubg+4mHqTJ9SH6yreJ/rNUcBAd3gqWmaRbBNeEYdiFzxESUGGypNfYLkOw+oa4Y6/CF6Q19wmHX6VHWmdRJivwYY2D9+RZrAjX0+pTTmbbdUQ9+QIz6I5ez/+VTTYqcYD2BjnTb8blw5xju08DAXIXPtyWiNzBhn1RDjEEtgH9SgE504iAXMbHQAJL7CvFeZyUoS+0689vl7CgC2Bb/yFBPdJmTYC5yi8s527FfYWVWUzqMTQR1vl+XzeDsnpathQBu+10TdfN/cI+5SOlDf+53mrVS0Z9wCrJeAoAy7cZA/7aa4pz7Lb06Ia8Ybgt9ORpBW+BPhPdyp7RKd2+Iei1HOtG0jQJ8KBL0CTq0RcJs9mDCnDnhmNrncVIWHBrrrn3I6Gu61cy7fhushnWkjYBAMw3UhMUZkLtXN6BLlLsaD4FFZRrNlMgUEP89tnB88WAfoGLEc/kfNXU7018liZHlc6JzzZsisrZx4lIvt+sXNeOqz7r4WepgH9y7iSyYvfalkGTXEioTd7UKZWyB6r3gy2FghvAWdQxeQNGQhnFY1LE4lkNJaQpNIhPLvdr6EXrDjk0vVh5Qri60k6mcoFT5YUIXDIvji1jBjcKZX+HPHqS9hTjRZZNE+tpvK7PD1eZMDU0d5Yt4s6c=";
+const COACH_BLOB = "F7WZpFnCni7WPyH0GBlNgi71VnFiqfIUJnr8VpT0FwoyVSGsTlam9bx8iLyHJgkNyDyPm8k4LgQxWa20Hx5zSXXmkzeeBQprIYASWrg5xNGGIP6Kk8F5saggFeOePWMHpso0hS3E0WeyUiz4RFI08mpeoFM0RnRjNaqfIrPMJBVOJyWMNsU/uAWdQjuq0nv9auy8OF+7A89nOPf9DZVlWz/z964sqoYLclp+M5kf6df9jZQj7ocmqz6NJmPAASuLCBGLyQNJLTCuRmssZ9fwlWph+twuqmXlDBJizAXJQGDeDn5mnPRZF7/aFzt2LNSUm32J1mdsE1LjJH69P0JYNdSJCXDyBYEs4a7468wG1up3phFKGEvOTLVdimEPaQ//ZCSnWi0MnLUW76QAUGx9u+pApG3Keh+UMpdfrtpqtXrUCK7vetsbKUKubspI/17zJsnCVwxw9t0fc5CyqRLM5OyWQr25d4m/9lkEOtJvcYZha14ZJL9XefZ3luNW8ir/3tAu6gMhS/pMebzSKTG60is3fz98xXAjuQ5B89RacuUugypNfKiJGs7VWEZ0DctEAEbDE/Sq20C8tBmEnTmVSDE05Vv50yFD2ivmyJfeKF669/H1abD4ABXJ87u8ZaEk2b0O+bTS6Xg6JN9DlkK3UcrvOnhThOE56vwZyKicOAoj33iLYVi3mSY7ibGD8Y5hKnjxGSO+PuzMEUfSna78IZ+YqJRngjefcwrYaH1k76No5uAHgOYtnzOxLGiHytLkO3/oljtFdvgIDrc5Ciw=";
 const normPass = s => s.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().replace(/\s+/g, "");
 async function unlockCoach(pass) {
   const raw = Uint8Array.from(atob(COACH_BLOB), c => c.charCodeAt(0));
