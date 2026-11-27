@@ -129,6 +129,7 @@ label textarea { min-height: 70px; resize: vertical; }
 @media (prefers-color-scheme: dark) { .bar { color: #0f1612; } }
 .bar[hidden] { display: none; }
 .contact[hidden], #cats[hidden] { display: none; }
+body.nodeca .deca, body:not(.nodeca) .nodeca { display: none; }
 .total span:last-child { text-transform: none; white-space: nowrap; }
 @media (prefers-color-scheme: dark) { .lockrow button, .pick, .jump a:hover, .jump a.go { color: #0f1612; } }
 footer { color: var(--muted); font-size: 14px; }
@@ -148,14 +149,14 @@ footer { color: var(--muted); font-size: 14px; }
   </header>
 
   <div class="intro">
-    <p class="deadline" id="deadline">Objednávky přijímáme do <b>31. 12. 2026</b>.</p>
+    <p class="deadline" id="deadline">Objednávky Joma přijímáme do <b>7. 12. 2026</b>.</p>
     <p>Vyberte počty kusů podle velikostí, dole vyplňte kontakt a <b>odešlete</b>.</p>
     <div class="tips">
-      <div><b>Joma je hlavní</b>klubové (vycházkové) oblečení. Decathlon je doplněk jen na tréninky.</div>
-      <div><b>Cena vč. loga</b>Joma set je vč. potisku. U Decathlonu potisk odhadem 60 Kč/ks, upřesníme (štulpny jsou bez loga). Šála a čepice zatím bez ceny.</div>
-      <div><b>Sleva v Decathlonu</b>výsledná cena tréninkových věcí bude nižší – přesně ji budeme znát až z faktury.</div>
-      <div><b>Dodání</b>orientačně od objednání: Joma set cca 3 týdny, Decathlon cca 14 dní (dodání + potisk).</div>
-      <div><b>Velikost</b>děti podle výšky (raději větší), štulpny podle bot. <a href="https://www.decathlon.cz/size-guide" target="_blank" rel="noopener">Průvodce velikostí</a></div>
+      <div><b>Joma je hlavní</b>klubové (vycházkové) oblečení.<span class="deca"> Decathlon je doplněk jen na tréninky.</span><span class="nodeca"> Tréninkové věci z Decathlonu otevřeme k objednání později.</span></div>
+      <div><b>Cena vč. loga</b>Joma set je vč. potisku loga a názvu oddílu.<span class="deca"> U Decathlonu potisk odhadem 60 Kč/ks, upřesníme (štulpny jsou bez loga).</span> Šála a čepice zatím bez ceny.</div>
+      <div class="deca"><b>Sleva v Decathlonu</b>výsledná cena tréninkových věcí bude nižší – přesně ji budeme znát až z faktury.</div>
+      <div><b>Dodání</b>orientačně od objednání: Joma set cca 3 týdny<span class="deca">, Decathlon cca 14 dní (dodání + potisk)</span>.</div>
+      <div><b>Velikost</b>děti podle výšky (raději větší)<span class="deca">, štulpny podle bot. <a href="https://www.decathlon.cz/size-guide" target="_blank" rel="noopener">Průvodce velikostí</a></span>. <a href="https://www.josport.cz/velikosti-joma/" target="_blank" rel="noopener">Tabulka velikostí Joma</a></div>
     </div>
   </div>
   <nav class="jump" id="jump" aria-label="Sekce"></nav>
@@ -195,8 +196,12 @@ footer { color: var(--muted); font-size: 14px; }
 
 <script>
 const UPDATED = "27. 11. 2026";
-const DEADLINE = new Date("2027-01-01T00:00:00+01:00"); // orders close at the end of 31. 12. 2026
-const DEADLINE_TXT = "31. 12. 2026";
+const DEADLINE = new Date("2026-12-08T00:00:00+01:00"); // Joma orders close at the end of 7. 12. 2026
+const DEADLINE_TXT = "7. 12. 2026";
+const CLOSED = () => new Date() >= DEADLINE;
+// Decathlon training items are hidden for now (coach section, scarves and hats stay) – set to false to show them again
+const DECA_HIDDEN = true;
+const visible = p => !(DECA_HIDDEN && p.cat !== "Pro trenéry" && /decathlon\.cz/.test(p.url || ""));
 const PRINT_DEFAULT = "logo"; // product gets the club logo printed (always, same for everyone)
 const PRINT_PRICE = 60;
 const printed = p => p.print === PRINT_DEFAULT;
@@ -376,7 +381,7 @@ const qty = {}; // key "productId|size" -> count
 let coachUnlocked = false;
 
 // Coach-only products are shipped encrypted (AES-GCM, key from the coach password via PBKDF2) so they are not readable without it
-const COACH_BLOB = "/xza1TmdX8IpcijlRYPSiehgAIRgP8c7Vr8Q6mLdgZOzyQAdmCGI5go/nTAZZB61dbVjkTekcSF5RdmbSScufElbRBhXxGlk0t+yZGA5nhl1qhw45YnGZDjMrQeBaKI+zF+2KsOnUYHTGjo2FoDPNCVu1b3np207kJv/PkmB6NNfiVgOcvLkOqNMJYgkYwgyB9b/nkGauVkphqXaIy5k6TigGaYvxYX356eAeE+Pgy0m74jIAl2MDgADR8A+JmfQengOmoaT8q4zeEMr+MAU2g8S3WlvVV6Mf677nFsjjnRJUW+ODots39LTZWXHSQ7sXL4XHYpurHeeDkATwXTB3Hgbw3/05ZmdXLulZT/wZr8OZsOEA2RuXHfubPnbTIpeONoR1F4aLCUPPUn6TUw4/+yeXK35q4aC39EMUwMUoySZTpBxVIlgP9QA0Z55NDscGsrP0qArO7vjd16wclReTIO6cNuK6GYZhGmg6azbxQnk+BuXjLqQ9/nD12ympENxW1i4hJGMAkKOk1gluLHDC83Fml2aUxmhnXCrh4GxpVFP20/pFQffpMnQ6Kibi0KSzMTo05/b+xFXCi+uWBt0NvVZXIc3ACX6Nbhrtrm/fUR8sxWhldpz/zqXOcapSSxuC0yvTw7kPSh2qGVx0cDUQpjkLDka+GOju06Pv3NGwHrQbo2OoIVYWf5vjCRk1yMh2KdY1Z9/HKNgXHU/0ZTVvYev0HAXLjSK8KC1LzsRR/APgNI3alSUL/oVWbWBqAaySZfBSWdiJgsVmVnYOSqIVRAOn5uauG9su2f5IhMVDjeVKGolJ7YeSsJPEKemFW1FpbpL/3NEW3qnMi+4zPN4qATumlU/1vp7CVZrYExu6jhznRdSpZTso4O2xY0wZCueYrEp3aO0kcT4Qh+qdXRepFGBvavKIAhSqePFvhf33x/V/cjgBQujQgwnWBzGF963mSb8k9Xt90sWa1dvOu68Mg7nFedTxgBtea2IiD5XEJSkhh6BpBkXE9oJ39odAQtwMBBDRdp8agoZzXX8hI4k2Ra3Ho6bAgCm9eSJB1z00qL5UiTq/fO738HnQBlLkrlIBjFkPjbOBYt0V6H8bqVnpWslDjfpw1IKg7nbfR815hfy7uCEWFIzCggaweQRVFvPufHghAtMNY27qXg4IiRMD7tD4wvSEsgJ8e0u2rQtsrGayiIxbSwtFb9gIS/Ibz5eo4RGPSIVz0TThCIiBRyMkNghxHdGHvDSj4KUcS/TlDS7NoUysLmZFy/CRa+FQw2ddg1/FP0jYx6h1M3SvOJTxYX+KsTUbsdC7oIX4k2OXYmdB9SElmSKIbXxFbZoojctR7R3lgMM4ZdfTSJ81i34XaaDKS9fwzAe1fpMgqVNYjY13Uk9Cv5TvRpZTBSjGALOyN0FN7Y/6XHbxY5MUtodL4ZFChnSZT8LZoZn1e5t/K37TE1lxyxueG7RzRp8LAY7IOGKzrtTjZDHLPgZ";
+const COACH_BLOB = "BJ72B2EXjl60WllaPmlrI9eRZLQRb4JWUngIw4iMnhqfxVDOyb1s5UC9SuZq2Jr/A+rFPhve+SWLktybBJnEbI/tFG7tCRG+JOpOmjl5y6h7u2JRHSNYgXEdx3ISarDYjS/yythMzz0cVqkaVPF9RyFn7SBGqXlBVaglAKVMwSP0dCdlmxc4R5MngB/tKIAUE5EtdPIbfScMcugVRAkbfX35iTsSD5ij173spQsdPabEj7nWQELtH6ojYOMlLRNud54ov6lnH1quamB9Dz0ClifrxAOPIzGL0mEbpHg5lhTM+ItF2ezf8Zh5qbuWpai6EXCC1nl9KjgmqjIv6jzM0EDGt0vHGFje5+WlnjxfMSPtX7sebcRUoz5KXmvsb9vRKYwjCOJeSwXatFnxtBuG15oha5H3bwmGodABmSrFJtpMYto/N0Dwaa64quUr0gRzdCfMESUnExgW2dZfIZ9Tu3SY+XdY2kZVWTgN2qdvpxdtdYjOoWmnlqcAqMcLXFKMWZOg4tTf/a6burJsTixn3PMBtb13OaKEO0Pkf2MukF7k6vJj/LSjowEbUoXv5XeK5306EsL+gZW3Dk7+6+wzM2xw4eyAbHEDuua15s7SDr8nIXp2PPffnxnMGi1Giwfr6e349eOHPrc2Yw32Y4GTlOVlNK2/EVwq8VyF0xi30N0EODO/poZDEH7+D3O4WAL/DH35Cml+a0fDPVwB5IQ5m4rfBgH7bLArlQUIPZUdwlCRJbWvOFpUNXRlaOyX4T4Jy/Jc5nughK2Vp1FEs8XbQUTmFAT35jEQo9euQbjd+3UZBQSp6KzbdaITf5nT78/qZVmjG6KbeT1Gz8jEhLRK0pBMTgUPMp28ZRRrcDQyETjPTeUs+r/P8W9rXfuSkOIs3PBO2AZm3W+3GU6apb87Kh29Q0ax82udJhhsoEBnSjiqFlNSOfbBfM18if0VNlbFZ1Uvb2mrBMid5P51nsZoNmDBvhGoD/XNScVTKdfVcFU9MVbjjGQDZeWwgUwgu3aWfyo4mt6O0yZ388lgL/1clrB78b1kxsWQrLWsb7Q4EkU4JX/udJ/vNKCHksbiFjsQFMGcyUS0PndMz1w9hcybODjNBVVJWy0cmHLdbu/HTzqeAoq/fxxmREVtMKBJn3fYYEkM5EdOtKxPzmO64noZoZGM9tXd7JE1nldavxdCy8q8P8UaUv9xG/MP8/t1rZ7FUInM/8ORmou0AmUa1ZiKAtjejOduoBlomzGGIQcBtODVIr+7JbwIrvF4JY94OqbPPAOLMfZKGOCjev3//iIWJfFMZojrgRFKMFaIugwCVIvR1Xw8YAKiJ7Qn+L2KtjnbQDIOHz6NmMI/K0bZkNq/IQ9+ILRSm6JX22y2NErbcKIX4lNf0Li6UPZaLt3spuFkUXhntTlMkrQBl+JJ0U91iVUMpes0SE8dNyS05YM0rgVV4pWVzIU/WuXZtPvkKU4yktCj8PNpsekH1cCf";
 const normPass = s => s.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().replace(/\s+/g, "");
 async function unlockCoach(pass) {
   const raw = Uint8Array.from(atob(COACH_BLOB), c => c.charCodeAt(0));
@@ -396,7 +401,7 @@ document.getElementById("stamp").textContent = "Ceny k " + UPDATED;
 
 const slug = c => "cat-" + c.normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/[^a-zA-Z0-9]+/g, "-").toLowerCase();
 function render() {
-  const cats = [...new Set(PRODUCTS.map(p => p.cat))];
+  const cats = [...new Set(PRODUCTS.filter(visible).map(p => p.cat))];
   document.getElementById("jump").innerHTML = cats.map(c => `<a href="#${slug(c)}">${esc(c)}</a>`).join("")
     + (coachUnlocked ? "" : `<a href="#coach">Pro trenéry 🔒</a>`) + `<a class="go" href="#form">Objednat ↓</a>`;
   document.getElementById("cats").innerHTML = cats.map(cat => `
@@ -404,6 +409,10 @@ function render() {
     <div class="products">${PRODUCTS.filter(p => p.cat === cat).map(card).join("")}</div>`).join("");
   renderSets();
   document.querySelectorAll(".size").forEach(row => { const n = qty[row.dataset.k] || 0; if (n) { row.querySelector("input").value = n; row.classList.add("on"); row.closest(".card").classList.add("open"); } });
+  if (CLOSED()) {
+    document.querySelectorAll(".qty button, .qty input").forEach(el => el.disabled = true);
+    document.querySelector('#jump a[href="#form"]')?.remove();
+  }
 }
 function setCard(p) {
   return `<article class="card set" id="p-${esc(p.id)}" data-p="${esc(p.id)}"><div class="badge" hidden></div>
@@ -493,7 +502,7 @@ function lines() {
   const out = [];
   const sp = PRODUCTS.find(x => x.set);
   if (sp) sets.forEach(st => out.push({ p: sp, s: setText(sp, st), n: 1, sum: sp.price }));
-  for (const p of PRODUCTS) for (const [s] of p.sizes) {
+  for (const p of PRODUCTS.filter(visible)) for (const [s] of p.sizes) {
     const n = qty[p.id + "|" + s] || 0;
     if (n) out.push({ p, s, n, sum: p.price == null ? 0 : n * unit(p) });
   }
@@ -571,6 +580,11 @@ document.getElementById("form").addEventListener("submit", async e => {
   } finally { btn.disabled = false; }
 });
 
+if (DECA_HIDDEN) document.body.classList.add("nodeca");
+if (CLOSED()) {
+  document.getElementById("deadline").innerHTML = `Objednávky Joma byly uzavřeny ${DEADLINE_TXT}. Děkujeme!`;
+  document.getElementById("form").hidden = true;
+}
 render(); update();
 document.getElementById("coachForm").addEventListener("submit", async e => {
   e.preventDefault();
