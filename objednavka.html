@@ -29,6 +29,8 @@ h1 { font-family: var(--display); font-weight: 800; font-size: clamp(34px, 6vw, 
 .stamp { font-family: var(--display); font-weight: 700; font-size: 18px; color: var(--pitch); border: 2px solid var(--pitch); border-radius: 4px; padding: 4px 10px; white-space: nowrap; }
 .intro { max-width: 70ch; margin: 0; display: grid; gap: 8px; }
 .intro p { margin: 0; }
+.deadline { font: 700 20px var(--display); text-transform: uppercase; letter-spacing: .02em; color: #0f1612; background: #5cc47c; border-radius: 6px; padding: 8px 12px; justify-self: start; }
+.deadline b { font-weight: 800; }
 .intro a, .meta a.sg { color: var(--pitch); }
 .jump { position: sticky; top: 0; z-index: 5; display: flex; flex-wrap: wrap; gap: 8px; padding: 10px 0; background: var(--bg); }
 .jump[hidden] { display: none; }
@@ -115,6 +117,7 @@ footer { color: var(--muted); font-size: 14px; }
   </header>
 
   <div class="intro">
+    <p class="deadline" id="deadline">Objednávky přijímáme do <b>31. 12. 2026</b>.</p>
     <p>U každého produktu vyplňte počet kusů v jednotlivých velikostech, dole doplňte kontakt a klikněte na <b>Odeslat objednávku</b>.</p>
     <p>Ceny jsou z Decathlonu a u tréninkových věcí už obsahují <b>potisk klubového loga (60 Kč)</b> – všichni budou mít stejné. U klubových věcí (šála, čepice) cenu ještě upřesníme.</p>
     <p><b>Velikost:</b> dětské oblečení se vybírá podle výšky dítěte (změřte ho; když je na hranici, vezměte raději větší), štulpny podle čísla bot. Podrobné tabulky najdete v <a href="https://www.decathlon.cz/size-guide" target="_blank" rel="noopener">průvodci velikostí Decathlonu</a>.</p>
@@ -147,6 +150,8 @@ footer { color: var(--muted); font-size: 14px; }
 
 <script>
 const UPDATED = "27. 11. 2026";
+const DEADLINE = new Date("2027-01-01T00:00:00+01:00"); // orders close at the end of 31. 12. 2026
+const DEADLINE_TXT = "31. 12. 2026";
 const PRINT_DEFAULT = "logo"; // product gets the club logo printed (always, same for everyone)
 const PRINT_PRICE = 60;
 const printed = p => p.print === PRINT_DEFAULT;
@@ -411,7 +416,7 @@ document.getElementById("form").addEventListener("submit", async e => {
     "Objednávka": orderText,
     "Předběžně celkem (vč. potisku loga)": kc(total) + (hasUnpriced ? " + šála/čepice (cena upřesníme)" : ""),
     email: f.email.value.trim(),
-    _autoresponse: `Dobrý den,\n\nděkujeme za objednávku oblečení SK Postřižín č. ${orderId}.\n\n${orderText}\n\nPředběžně celkem: ${kc(total)} (vč. potisku loga)${hasUnpriced ? ", šála/čepice – cena bude upřesněna" : ""}.\n\nCo bude dál: po uzávěrce objednávek spočítáme finální cenu a pošleme vám e-mailem QR kód k platbě na účet klubu. Do platby prosím uveďte číslo objednávky ${orderId} (v QR kódu bude jako variabilní symbol).\n\nSportovní klub Postřižín`,
+    _autoresponse: `Dobrý den,\n\nděkujeme za objednávku oblečení SK Postřižín č. ${orderId}.\n\n${orderText}\n\nPředběžně celkem: ${kc(total)} (vč. potisku loga)${hasUnpriced ? ", šála/čepice – cena bude upřesněna" : ""}.\n\nCo bude dál: po uzávěrce objednávek (${DEADLINE_TXT}) spočítáme finální cenu a pošleme vám e-mailem QR kód k platbě na účet klubu. Do platby prosím uveďte číslo objednávky ${orderId} (v QR kódu bude jako variabilní symbol).\n\nSportovní klub Postřižín`,
     "Poznámka": f.poznamka.value.trim()
   };
   btn.disabled = true; msg.className = "msg"; msg.textContent = "Odesílám…";
@@ -436,7 +441,7 @@ document.getElementById("form").addEventListener("submit", async e => {
       <div><b>Co bude dál</b></div>
       <ol>
         <li>Shrnutí objednávky vám přijde e-mailem na <b>${esc(f.email.value.trim())}</b>.</li>
-        <li>Po uzávěrce objednávek spočítáme <b>finální cenu</b>${hasUnpriced ? " (včetně šály / čepice)" : ""}.</li>
+        <li>Po uzávěrce objednávek (${DEADLINE_TXT}) spočítáme <b>finální cenu</b>${hasUnpriced ? " (včetně šály / čepice)" : ""}.</li>
         <li>Pošleme vám e-mailem <b>QR kód k platbě</b> na transparentní účet klubu – číslo objednávky ${orderId} v něm bude jako variabilní symbol.</li>
       </ol>
       <button type="button" class="again">Objednat další</button>`;
@@ -453,6 +458,12 @@ document.getElementById("form").addEventListener("submit", async e => {
 });
 
 render(); update();
+if (new Date() >= DEADLINE) {
+  document.getElementById("deadline").innerHTML = `Objednávky byly uzavřeny ${DEADLINE_TXT}. Děkujeme!`;
+  document.getElementById("form").hidden = true;
+  document.querySelectorAll(".qty button, .qty input").forEach(el => el.disabled = true);
+  document.querySelector('#jump a[href="#form"]')?.remove();
+}
 </script>
 </body>
 </html>
