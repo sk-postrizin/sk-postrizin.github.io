@@ -36,6 +36,10 @@ h3 { font-family: var(--display); font-weight: 700; font-size: 24px; margin: 0; 
 .ph { aspect-ratio: 1; background: var(--pitch); color: #fff; display: grid; place-content: center; justify-items: center; gap: 14px; padding: 20px; text-align: center; }
 .ph img { width: 45%; aspect-ratio: 1; border-radius: 50%; background: #fff; }
 .ph span { font: 800 28px/1.05 var(--display); text-transform: uppercase; }
+.card { position: relative; transition: box-shadow .15s, border-color .15s; scroll-margin-top: 16px; }
+.card.picked { border-color: #5cc47c; box-shadow: 0 0 0 3px #5cc47c; }
+.badge { position: absolute; top: 10px; right: 10px; background: #5cc47c; color: #0f1612; font: 800 18px var(--display); text-transform: uppercase; border-radius: 999px; padding: 4px 12px; box-shadow: 0 2px 6px rgba(0,0,0,.25); }
+.badge[hidden] { display: none; }
 .card .body { padding: 14px 16px 16px; display: grid; gap: 10px; align-content: start; }
 .meta { color: var(--muted); font-size: 14px; }
 .meta a { color: var(--pitch); }
@@ -46,7 +50,8 @@ h3 { font-family: var(--display); font-weight: 700; font-size: 24px; margin: 0; 
 .sizes { display: grid; gap: 0; border: 1px solid var(--line); border-radius: 6px; }
 .size { display: grid; grid-template-columns: 1fr auto; align-items: center; gap: 8px; padding: 6px 10px; border-bottom: 1px solid var(--line); }
 .size:last-child { border-bottom: 0; }
-.size.on { background: var(--pitch-soft); font-weight: 700; }
+.size.on { background: #5cc47c; color: #0f1612; font-weight: 700; }
+.size.on span small { color: #0f1612; }
 .size span small { color: var(--muted); font-weight: 400; }
 .qty { display: flex; align-items: center; gap: 4px; }
 .qty button { width: 34px; height: 34px; border-radius: 50%; border: 1px solid var(--line); background: var(--surface); color: var(--fg); font-size: 20px; line-height: 1; cursor: pointer; }
@@ -58,6 +63,8 @@ label { display: grid; gap: 4px; font-size: 14px; font-weight: 600; }
 label input, label textarea { font: 16px var(--body); padding: 9px 10px; border: 1px solid var(--line); border-radius: 4px; background: var(--bg); color: var(--fg); }
 label textarea { min-height: 70px; resize: vertical; }
 .summary { display: grid; gap: 4px; font-size: 15px; }
+.summary a.row { color: inherit; text-decoration: none; }
+.summary a.row:hover span:first-child { text-decoration: underline; }
 .summary .row { display: flex; justify-content: space-between; gap: 12px; border-bottom: 1px dashed var(--line); padding: 3px 0; }
 .total { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; font-family: var(--display); font-weight: 800; font-size: 28px; text-transform: uppercase; }
 .total small { font-family: var(--body); font-size: 13px; font-weight: 400; text-transform: none; color: var(--muted); }
@@ -281,7 +288,7 @@ function render() {
     <div class="products">${PRODUCTS.filter(p => p.cat === cat).map(card).join("")}</div>`).join("");
 }
 function card(p) {
-  return `<article class="card">
+  return `<article class="card" id="p-${esc(p.id)}" data-p="${esc(p.id)}"><div class="badge" hidden></div>
     ${p.img
       ? (p.url ? `<a href="${esc(p.url)}" target="_blank" rel="noopener"><img src="${esc(p.img)}" alt="${esc(p.name)}" loading="lazy"></a>` : `<img src="${esc(p.img)}" alt="${esc(p.name)}" loading="lazy">`)
       : `<div class="ph"><img src="${LOGO}" alt=""><span>${esc(p.phText || p.name)}</span></div>`}
@@ -326,9 +333,14 @@ function lines() {
 function update() {
   const L = lines(), total = L.reduce((a, l) => a + l.sum, 0), pcs = L.reduce((a, l) => a + l.n, 0);
   document.getElementById("summary").innerHTML = L.length
-    ? L.map(l => `<div class="row"><span>${l.n}× ${esc(l.p.name)} – ${esc(l.s)}</span><span>${l.p.price == null ? "cena upřesníme" : kc(l.sum)}</span></div>`).join("")
+    ? L.map(l => `<a class="row" href="#p-${esc(l.p.id)}"><span>${l.n}× ${esc(l.p.name)} – ${esc(l.s)}</span><span>${l.p.price == null ? "cena upřesníme" : kc(l.sum)}</span></a>`).join("")
     : `<div class="meta">Zatím nic nevybráno.</div>`;
   document.getElementById("total").textContent = kc(total);
+  document.querySelectorAll(".card").forEach(c => {
+    const n = L.filter(l => l.p.id === c.dataset.p).reduce((a, l) => a + l.n, 0);
+    c.classList.toggle("picked", n > 0);
+    const b = c.querySelector(".badge"); b.hidden = !n; b.textContent = `V objednávce ${n} ks`;
+  });
   const bar = document.getElementById("bar");
   bar.hidden = !pcs;
   document.getElementById("barTxt").textContent = `${pcs} ks · ${kc(total)}`;
