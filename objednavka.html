@@ -38,6 +38,14 @@ h1 { font-family: var(--display); font-weight: 800; font-size: clamp(34px, 6vw, 
 .jump a { font: 700 16px var(--display); text-transform: uppercase; letter-spacing: .03em; color: var(--fg); text-decoration: none; border: 2px solid var(--pitch); border-radius: 999px; padding: 4px 14px; }
 .jump a:hover, .jump a.go { background: var(--pitch); color: #fff; }
 #cats h2 { scroll-margin-top: 64px; }
+.coach { scroll-margin-top: 64px; }
+.coach[hidden] { display: none; }
+.coach h2 { margin-top: 48px; padding-top: 20px; border-top: 3px solid var(--pitch); }
+.lock { background: var(--surface); border: 1px dashed var(--pitch); border-radius: 6px; padding: 16px; display: grid; gap: 10px; max-width: 520px; }
+.lock p { margin: 0; }
+.lockrow { display: flex; gap: 8px; }
+.lockrow input { flex: 1; font: 16px var(--body); padding: 9px 10px; border: 1px solid var(--line); border-radius: 4px; background: var(--bg); color: var(--fg); }
+.lockrow button { font: 800 18px var(--display); text-transform: uppercase; background: var(--pitch); color: #fff; border: 0; border-radius: 4px; padding: 0 16px; cursor: pointer; }
 .pick { display: none; }
 @media (max-width: 700px) {
   .pick { display: flex; justify-content: space-between; align-items: center; width: 100%; font: 700 17px var(--body); background: var(--pitch); color: #fff; border: 0; border-radius: 6px; padding: 11px 14px; cursor: pointer; }
@@ -125,6 +133,15 @@ footer { color: var(--muted); font-size: 14px; }
   <nav class="jump" id="jump" aria-label="Sekce"></nav>
 
   <section id="cats"></section>
+
+  <section class="coach" id="coach">
+    <h2>Pro trenéry 🔒</h2>
+    <form class="lock" id="coachForm">
+      <p>Tuhle sekci vidí jen trenéři. Zadejte trenérské heslo.</p>
+      <div class="lockrow"><input type="password" id="coachPass" placeholder="Heslo" autocomplete="off" aria-label="Trenérské heslo"><button type="submit">Odemknout</button></div>
+      <div class="msg err" id="coachMsg" role="status"></div>
+    </form>
+  </section>
 
   <section class="thanks" id="thanks" hidden></section>
 
@@ -314,16 +331,36 @@ const LOGO = document.querySelector(".logo").src;
 const esc = s => String(s).replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
 const kc = n => n.toLocaleString("cs-CZ") + " Kč";
 const qty = {}; // key "productId|size" -> count
+let coachUnlocked = false;
+
+// Coach-only products are shipped encrypted (AES-GCM, key from the coach password via PBKDF2) so they are not readable without it
+const COACH_BLOB = "PYN3llzcfnmzo7e1sEqw3rHcMFV1+RIY4VOnVMgeX2Wobcpjp+F3KNBgYklW1tqNK3uigQOKmTz7C8tjSOi3wy4ixEFbO9ONrwRDGkDtpytL0GAiubRQNfeGzvKvdaJHEyz9ZCjV4ZhBfOQxCgwNNW+xUqNujvW2WRQk2QzIihA9SuE+MxDHnGZFjQ+2+Fxp/h6kpYIgmKdhUEjDzeF0jdhdvrwof+2jFVi4enYIBFfnUHvJEXTxaF2gT68VMzWttYLGjAGgLJQuKR0qhWrWrJy23En6rBQ3FJiToh4nbt9jurZ6yOF+l3W+aRIr0l9mlNa9oLnoPIlFMXrcpajVVYFcSKYG9pDl8B+TUO1hixKU5OBNqnaahlf9RDgfMv/FueU8CQJLWqzbcqERDYPez3INzCFGW5c9V4G5/lvbwVgXpkM9k9hC1/ULAOHmr6qcNMF4pYcAe2oF5sfeOZZKHJ+kTDOm5s3pUwK+VELVuo/zZQqMS+Zdq4megFf/hyJpHoT+6RINSfqVQznPFCkuezm4ag05oenDi0myU2lSQdMHPq6BDMrH8zvMm1glbu+WX9FwPmwOzq+vCan0SH0ME4d4JE3MHfzmPRmbTm2+PJ8rLhvr889wASzsMd0KMjopy7+7wfIQMjlFhv7vOvTrR0k/ui5tRky0FtkoUIE58DYz366Cfm1IEyy11Jid/n9IJJfeYKKUJKt3LTPXBkZ/NbE9eTlElOKtwNoNEanzSD2v/4qYJd/Gu0Ieom5vQ98gYBi8xeYCQREbPX12kfs=";
+const normPass = s => s.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().replace(/\s+/g, "");
+async function unlockCoach(pass) {
+  const raw = Uint8Array.from(atob(COACH_BLOB), c => c.charCodeAt(0));
+  const salt = raw.slice(0, 16), iv = raw.slice(16, 28), ct = raw.slice(28);
+  const base = await crypto.subtle.importKey("raw", new TextEncoder().encode(normPass(pass)), "PBKDF2", false, ["deriveKey"]);
+  const key = await crypto.subtle.deriveKey({ name: "PBKDF2", salt, iterations: 200000, hash: "SHA-256" }, base, { name: "AES-GCM", length: 256 }, false, ["decrypt"]);
+  const items = JSON.parse(new TextDecoder().decode(await crypto.subtle.decrypt({ name: "AES-GCM", iv }, key, ct)));
+  for (const it of items) { if (it.print === "logo") it.print = PRINT_DEFAULT; if (!PRODUCTS.some(p => p.id === it.id)) PRODUCTS.push(it); }
+  coachUnlocked = true;
+  try { sessionStorage.setItem("coachPass", pass); } catch {}
+  document.getElementById("coach").hidden = true;
+  render(); update();
+  return items;
+}
 
 document.getElementById("stamp").textContent = "Ceny k " + UPDATED;
 
 const slug = c => "cat-" + c.normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/[^a-zA-Z0-9]+/g, "-").toLowerCase();
 function render() {
   const cats = [...new Set(PRODUCTS.map(p => p.cat))];
-  document.getElementById("jump").innerHTML = cats.map(c => `<a href="#${slug(c)}">${esc(c)}</a>`).join("") + `<a class="go" href="#form">Objednat ↓</a>`;
+  document.getElementById("jump").innerHTML = cats.map(c => `<a href="#${slug(c)}">${esc(c)}</a>`).join("")
+    + (coachUnlocked ? "" : `<a href="#coach">Pro trenéry 🔒</a>`) + `<a class="go" href="#form">Objednat ↓</a>`;
   document.getElementById("cats").innerHTML = cats.map(cat => `
     <h2 id="${slug(cat)}">${esc(cat)}</h2>
     <div class="products">${PRODUCTS.filter(p => p.cat === cat).map(card).join("")}</div>`).join("");
+  document.querySelectorAll(".size").forEach(row => { const n = qty[row.dataset.k] || 0; if (n) { row.querySelector("input").value = n; row.classList.add("on"); row.closest(".card").classList.add("open"); } });
 }
 function card(p) {
   return `<article class="card" id="p-${esc(p.id)}" data-p="${esc(p.id)}"><div class="badge" hidden></div>
@@ -458,6 +495,13 @@ document.getElementById("form").addEventListener("submit", async e => {
 });
 
 render(); update();
+document.getElementById("coachForm").addEventListener("submit", async e => {
+  e.preventDefault();
+  const m = document.getElementById("coachMsg"); m.textContent = "";
+  try { const items = await unlockCoach(document.getElementById("coachPass").value); document.getElementById(slug(items[0].cat))?.scrollIntoView({ behavior: "smooth" }); }
+  catch { m.textContent = "Špatné heslo."; }
+});
+try { const sp = sessionStorage.getItem("coachPass"); if (sp) unlockCoach(sp).catch(() => sessionStorage.removeItem("coachPass")); } catch {}
 if (new Date() >= DEADLINE) {
   document.getElementById("deadline").innerHTML = `Objednávky byly uzavřeny ${DEADLINE_TXT}. Děkujeme!`;
   document.getElementById("form").hidden = true;
