@@ -152,7 +152,7 @@ footer { color: var(--muted); font-size: 14px; }
     <p>Vyberte počty kusů podle velikostí, dole vyplňte kontakt a <b>odešlete</b>.</p>
     <div class="tips">
       <div><b>Joma je hlavní</b>klubové (vycházkové) oblečení. Decathlon je doplněk jen na tréninky.</div>
-      <div><b>Cena vč. loga</b>Joma set je vč. potisku. U Decathlonu potisk odhadem 60 Kč/ks, upřesníme. Šála a čepice zatím bez ceny.</div>
+      <div><b>Cena vč. loga</b>Joma set je vč. potisku. U Decathlonu potisk odhadem 60 Kč/ks, upřesníme (štulpny jsou bez loga). Šála a čepice zatím bez ceny.</div>
       <div><b>Sleva v Decathlonu</b>výsledná cena tréninkových věcí bude nižší – přesně ji budeme znát až z faktury.</div>
       <div><b>Dodání</b>orientačně od objednání: Joma set cca 3 týdny, Decathlon cca 14 dní (dodání + potisk).</div>
       <div><b>Velikost</b>děti podle výšky (raději větší), štulpny podle bot. <a href="https://www.decathlon.cz/size-guide" target="_blank" rel="noopener">Průvodce velikostí</a></div>
@@ -320,7 +320,7 @@ const PRODUCTS = [
     brand: "Kipsta",
     color: "kouřová černá",
     price: 119,
-    print: PRINT_DEFAULT,
+    print: "bez potisku",
     note: "Velikost podle čísla bot.",
     url: "https://www.decathlon.cz/p/detske-stulpny-viralto-prouzkovane/309733/c382m8560703",
     img: "https://contents.mediadecathlon.com/p2970422/k$dfde65e557354c88bf6e0320ec79d2f2/picture.jpg?format=auto&f=800x0",
@@ -376,7 +376,7 @@ const qty = {}; // key "productId|size" -> count
 let coachUnlocked = false;
 
 // Coach-only products are shipped encrypted (AES-GCM, key from the coach password via PBKDF2) so they are not readable without it
-const COACH_BLOB = "uDuFJ28oHjQuo5HwXa5C3F+IXlmXsPUJErt3gVShDUzY3Y1ZbIHvmAlUjTTeVbw/Gq8s/NjcxavnDxRrIT0599cSFE+pV33Lua+HYQOuZID8qSOLWlSwCLCEcxPA2OVx9DOn1R7o/0H8GdO+KyZO/MgZHUqdpPhLWu6bbTK5wbTE/XXk+o2HkJxHVWVxlyeWuuJMs7TFReMYNpLTqSNr0UYgch1v7/9iZsNKXqsWtTXD50b7yuOB2ELksgGesuUGZk0XGME6xSH216sWq4ZOgdznGRINsYPCrGSvA/NQuEunOPZvH/dCi6I1h2Mxce2lIFnLMoCtmdqbXmvD3uqaFKqbKFXllUUxNwgS879wJG/AbRekMj/R0ydFtrtn7qbXcz2grkFZxMBklBnUdiW6DSy+DNZuIXIbxrBvC/PuJ3NU3/gY/S6LEj1tE3EFAgoyfzD+d2a0BslOwFeIzRoMPTu2R3ywMLDymB+C6CF9y8bTfD6d/NV88R8RzziF5Fn2vBvWpeYbQPdBRtgoogqYHGNb8RwCNr6+pr8fziWrKFGRcbmDRYeEt6BKdHfLzUkgQQVvR0NOo3d9vNyyvugIRW0LtbS0deHj+q7btPrmixwg5IJJrkWZ7coxkdGZf1kSOsn1r6CUG/BG/MsUh2KpTx/oB+9k+F6QdTCmV40Q0IRZJz90UEMawGWpYDI21F33x1cPLoQa8InMy10j5Bm5Xn1SCek7FZNOLte0puRirvznQ483cDxEkQQkbyLiIuZOVJVvk1vNvUZs0iNivLedkjNOwktT7VTOOijnudeWGNhaLFwYfLyatNLBKVmy1CoI9+0MvVL/wUAIQ4qaMP3r4h1ZM8PgHl4lH14gc6sK7pL3QYDzAgair8C59dmzBhWLtBg0Yd0K2D8nqHVIDw9DIH/zS8FGmT9sPAPSzyaCX7AkcXud/rqU4FahudDhiRktL0b+FPNxVxV2OkaT0CfIito7037KgAdbTW0K86hupLYnY26PWEk3SDFqzwk14joMDaz909XXj6bag6zx5hpwSVkyxsvtXmfVD3z2xVS53FnjYH3sI7oOOAesgFNQ/bx+n+IvsP3SxGGkt++Y7RoxvV3B0jQksIA5Z4Ok5nXH5hK9J228qUIaibvoGpfIziJvD1J4HDbSfCG1Uy468SxfhnNiN8UPtWrpfdh8hIx+Ci3awEcMRaWOwlTOslfJSycH6L4C22HPPjwPtbHjPTTsp5p/vov8BszpbJ9E21Fat5Xoq/cHg8s6oy9HpMzZ+/Q1AlOBa2knCjonqkoxZTJ+/XD4agimUbo/SxhtGQPaNG5GJJ8hZ1GfK6SAK6q3WAbaKSwdSDbtJA0KWkzNX4mlWVApSxwaEsEsWy/oqvQELMsubZGG8xw7RuDu+kVRnp31iloPc1XU9v5ZfjuvqvVgrivortNzg7GPLBM4edB55VqBrUqW2E6ZE9uGzgCR2UPCrTVogPJhBYM/KjZo";
+const COACH_BLOB = "/xza1TmdX8IpcijlRYPSiehgAIRgP8c7Vr8Q6mLdgZOzyQAdmCGI5go/nTAZZB61dbVjkTekcSF5RdmbSScufElbRBhXxGlk0t+yZGA5nhl1qhw45YnGZDjMrQeBaKI+zF+2KsOnUYHTGjo2FoDPNCVu1b3np207kJv/PkmB6NNfiVgOcvLkOqNMJYgkYwgyB9b/nkGauVkphqXaIy5k6TigGaYvxYX356eAeE+Pgy0m74jIAl2MDgADR8A+JmfQengOmoaT8q4zeEMr+MAU2g8S3WlvVV6Mf677nFsjjnRJUW+ODots39LTZWXHSQ7sXL4XHYpurHeeDkATwXTB3Hgbw3/05ZmdXLulZT/wZr8OZsOEA2RuXHfubPnbTIpeONoR1F4aLCUPPUn6TUw4/+yeXK35q4aC39EMUwMUoySZTpBxVIlgP9QA0Z55NDscGsrP0qArO7vjd16wclReTIO6cNuK6GYZhGmg6azbxQnk+BuXjLqQ9/nD12ympENxW1i4hJGMAkKOk1gluLHDC83Fml2aUxmhnXCrh4GxpVFP20/pFQffpMnQ6Kibi0KSzMTo05/b+xFXCi+uWBt0NvVZXIc3ACX6Nbhrtrm/fUR8sxWhldpz/zqXOcapSSxuC0yvTw7kPSh2qGVx0cDUQpjkLDka+GOju06Pv3NGwHrQbo2OoIVYWf5vjCRk1yMh2KdY1Z9/HKNgXHU/0ZTVvYev0HAXLjSK8KC1LzsRR/APgNI3alSUL/oVWbWBqAaySZfBSWdiJgsVmVnYOSqIVRAOn5uauG9su2f5IhMVDjeVKGolJ7YeSsJPEKemFW1FpbpL/3NEW3qnMi+4zPN4qATumlU/1vp7CVZrYExu6jhznRdSpZTso4O2xY0wZCueYrEp3aO0kcT4Qh+qdXRepFGBvavKIAhSqePFvhf33x/V/cjgBQujQgwnWBzGF963mSb8k9Xt90sWa1dvOu68Mg7nFedTxgBtea2IiD5XEJSkhh6BpBkXE9oJ39odAQtwMBBDRdp8agoZzXX8hI4k2Ra3Ho6bAgCm9eSJB1z00qL5UiTq/fO738HnQBlLkrlIBjFkPjbOBYt0V6H8bqVnpWslDjfpw1IKg7nbfR815hfy7uCEWFIzCggaweQRVFvPufHghAtMNY27qXg4IiRMD7tD4wvSEsgJ8e0u2rQtsrGayiIxbSwtFb9gIS/Ibz5eo4RGPSIVz0TThCIiBRyMkNghxHdGHvDSj4KUcS/TlDS7NoUysLmZFy/CRa+FQw2ddg1/FP0jYx6h1M3SvOJTxYX+KsTUbsdC7oIX4k2OXYmdB9SElmSKIbXxFbZoojctR7R3lgMM4ZdfTSJ81i34XaaDKS9fwzAe1fpMgqVNYjY13Uk9Cv5TvRpZTBSjGALOyN0FN7Y/6XHbxY5MUtodL4ZFChnSZT8LZoZn1e5t/K37TE1lxyxueG7RzRp8LAY7IOGKzrtTjZDHLPgZ";
 const normPass = s => s.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().replace(/\s+/g, "");
 async function unlockCoach(pass) {
   const raw = Uint8Array.from(atob(COACH_BLOB), c => c.charCodeAt(0));
