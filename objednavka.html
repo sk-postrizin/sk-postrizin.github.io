@@ -239,12 +239,12 @@ const PRODUCTS = [
     id: "sala",
     cat: "Doplňky",
     name: "Klubová pletená šála",
-    color: "zelená / bílá, 134 × 17 cm",
+    color: "zelená / bílá",
     price: null,
     print: "",
     phText: "Šála SK Postřižín",
-    note: "Pletená šála s logem klubu ve dvou motivech.",
-    sizes: [["Motiv „SK POSTŘIŽÍN“",""],["Motiv „HRDOST, SÍLA A ČEST“",""]]
+    note: "Pletená šála s logem klubu – na líci „SK POSTŘIŽÍN“, na rubu „HRDOST, SÍLA A ČEST“.",
+    sizes: [["134 × 17 cm","jedna velikost"]]
   },
   {
     id: "cepice",
@@ -263,6 +263,9 @@ const PRODUCTS = [
 const TO = atob("bHVreWtlQGdtYWlsLmNvbQ==");
 const CC = atob("THVrYXMuc2xlaG9mZXJAZW1haWwuY3o=");
 const ENDPOINT = "https://formsubmit.co/ajax/" + TO;
+// Every order is also stored as a row in the Google Sheet behind this Google Form
+const SHEET_FORM = "https://docs.google.com/forms/d/e/1FAIpQLScMfRqI-5uX6l-2-lgOx8pM0om-AFLYWKdg0xP8WNx1yG-nMg/formResponse";
+const SHEET_FIELDS = { jmeno: "entry.900553045", prijmeni: "entry.137676451", email: "entry.1781183164", hrac: "entry.1851539849", objednavka: "entry.654281290", poznamka: "entry.308135502", polozky: "entry.1466690947", celkem: "entry.872089988" };
 
 const LOGO = document.querySelector(".logo").src;
 const esc = s => String(s).replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
@@ -341,8 +344,12 @@ document.getElementById("form").addEventListener("submit", async e => {
   if (!f.email.checkValidity()) { msg.textContent = "Zkontrolujte e-mail."; f.email.focus(); return; }
   const total = L.reduce((a, l) => a + l.sum, 0);
   const name = f.jmeno.value.trim() + " " + f.prijmeni.value.trim();
+  const d = new Date(), pad = n => String(n).padStart(2, "0");
+  const orderId = String(d.getFullYear()).slice(2) + pad(d.getMonth() + 1) + pad(d.getDate()) + String(Math.floor(Math.random() * 1000)).padStart(3, "0");
+  const orderText = L.map(l => `${l.n}× ${l.p.name} (${l.p.color}) – ${l.s} – ${l.p.price == null ? "cena upřesníme" : kc(l.sum)}`).join("\n");
   const data = {
-    _subject: `Objednávka oblečení – ${name} (${kc(total)})`,
+    _subject: `Objednávka oblečení č. ${orderId} – ${name} (${kc(total)})`,
+    "Číslo objednávky": orderId,
     _cc: CC,
     _template: "table",
     _captcha: "false",
@@ -352,17 +359,26 @@ document.getElementById("form").addEventListener("submit", async e => {
     "E-mail": f.email.value.trim(),
     _replyto: f.email.value.trim(),
     "Hráč / tým": f.hrac.value.trim(),
-    "Objednávka": L.map(l => `${l.n}× ${l.p.name} (${l.p.color}) – ${l.s} – ${l.p.price == null ? "cena upřesníme" : kc(l.sum)}`).join("\n"),
+    "Objednávka": orderText,
     "Celkem bez potisku": kc(total),
     "Poznámka": f.poznamka.value.trim()
   };
   btn.disabled = true; msg.className = "msg"; msg.textContent = "Odesílám…";
+  const row = new URLSearchParams({
+    [SHEET_FIELDS.jmeno]: data["Jméno"], [SHEET_FIELDS.prijmeni]: data["Příjmení"], [SHEET_FIELDS.email]: data["E-mail"],
+    [SHEET_FIELDS.hrac]: data["Hráč / tým"], [SHEET_FIELDS.objednavka]: orderText, [SHEET_FIELDS.poznamka]: data["Poznámka"],
+    [SHEET_FIELDS.polozky]: JSON.stringify({ id: orderId, items: L.map(l => ({ p: l.p.id, s: l.s, n: l.n, price: l.p.price })) }),
+    [SHEET_FIELDS.celkem]: String(total)
+  });
   try {
-    const r = await fetch(ENDPOINT, { method: "POST", headers: { "Content-Type": "application/json", "Accept": "application/json" }, body: JSON.stringify(data) });
-    const j = await r.json().catch(() => ({}));
-    if (!r.ok || String(j.success) === "false") throw new Error(j.message || r.status);
+    const [mail, sheet] = await Promise.allSettled([
+      fetch(ENDPOINT, { method: "POST", headers: { "Content-Type": "application/json", "Accept": "application/json" }, body: JSON.stringify(data) })
+        .then(async r => { const j = await r.json().catch(() => ({})); if (!r.ok || String(j.success) === "false") throw new Error(j.message || r.status); }),
+      fetch(SHEET_FORM, { method: "POST", mode: "no-cors", body: row })
+    ]);
+    if (mail.status === "rejected" && sheet.status === "rejected") throw new Error("send failed");
     msg.className = "msg ok";
-    msg.textContent = `Díky, objednávka odeslána (${kc(total)} bez potisku). Trenér se vám ozve.`;
+    msg.textContent = `Díky, objednávka č. ${orderId} odeslána (${kc(total)} bez potisku). Trenér se vám ozve s platbou.`;
     f.reset();
     document.querySelectorAll(".size").forEach(row => { qty[row.dataset.k] = 0; row.querySelector("input").value = 0; row.classList.remove("on"); });
     update();
