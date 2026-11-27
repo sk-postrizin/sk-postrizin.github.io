@@ -27,10 +27,26 @@ header { display: flex; flex-wrap: wrap; align-items: flex-end; justify-content:
 .eyebrow { font-size: 13px; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); font-weight: 600; }
 h1 { font-family: var(--display); font-weight: 800; font-size: clamp(34px, 6vw, 52px); line-height: 1; margin: 4px 0 0; text-transform: uppercase; }
 .stamp { font-family: var(--display); font-weight: 700; font-size: 18px; color: var(--pitch); border: 2px solid var(--pitch); border-radius: 4px; padding: 4px 10px; white-space: nowrap; }
-.intro { max-width: 70ch; margin: 0; }
+.intro { max-width: 70ch; margin: 0; display: grid; gap: 8px; }
+.intro p { margin: 0; }
+.intro a, .meta a.sg { color: var(--pitch); }
+.jump { position: sticky; top: 0; z-index: 5; display: flex; flex-wrap: wrap; gap: 8px; padding: 10px 0; background: var(--bg); }
+.jump a { font: 700 16px var(--display); text-transform: uppercase; letter-spacing: .03em; color: var(--fg); text-decoration: none; border: 2px solid var(--pitch); border-radius: 999px; padding: 4px 14px; }
+.jump a:hover, .jump a.go { background: var(--pitch); color: #fff; }
+#cats h2 { scroll-margin-top: 64px; }
+.pick { display: none; }
+@media (max-width: 700px) {
+  .pick { display: flex; justify-content: space-between; align-items: center; width: 100%; font: 700 17px var(--body); background: var(--pitch); color: #fff; border: 0; border-radius: 6px; padding: 11px 14px; cursor: pointer; }
+  .card:not(.open) .sizes { display: none; }
+}
+.thanks { background: var(--surface); border: 3px solid #5cc47c; border-radius: 6px; padding: 20px 16px; display: grid; gap: 14px; scroll-margin-top: 16px; }
+.thanks[hidden] { display: none; }
+.thanks h2 { margin: 0; }
+.thanks ol { margin: 0; padding-left: 22px; display: grid; gap: 6px; }
+.thanks .again { justify-self: start; font: 700 16px var(--body); background: none; color: var(--pitch); border: 2px solid var(--pitch); border-radius: 6px; padding: 8px 14px; cursor: pointer; }
 h2 { font-family: var(--display); font-weight: 800; font-size: 30px; margin: 0 0 12px; line-height: 1; text-transform: uppercase; }
 h3 { font-family: var(--display); font-weight: 700; font-size: 24px; margin: 0; line-height: 1.1; }
-#cats h2:not(:first-child) { margin-top: 48px; padding-top: 20px; border-top: 3px solid var(--pitch); }
+#cats h2:not(:first-of-type) { margin-top: 48px; padding-top: 20px; border-top: 3px solid var(--pitch); }
 .products { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 330px), 1fr)); gap: 20px; }
 .card { background: var(--surface); border: 1px solid var(--line); border-radius: 6px; overflow: hidden; display: grid; grid-template-rows: auto 1fr; }
 .card img { width: 100%; aspect-ratio: 1; object-fit: contain; background: #fff; display: block; }
@@ -96,9 +112,16 @@ footer { color: var(--muted); font-size: 14px; }
     <div class="stamp" id="stamp"></div>
   </header>
 
-  <p class="intro">U každého produktu vyplňte počet kusů v jednotlivých velikostech, dole doplňte kontakt a klikněte na <b>Odeslat objednávku</b>. Ceny jsou převzaté z Decathlonu. Potisk na tréninkové věci stojí 60 Kč za jeden potisk a platí se zvlášť. U klubových věcí (šála, čepice) cenu ještě upřesníme. Velikosti dětského oblečení jsou podle výšky dítěte, štulpny podle čísla bot.</p>
+  <div class="intro">
+    <p>U každého produktu vyplňte počet kusů v jednotlivých velikostech, dole doplňte kontakt a klikněte na <b>Odeslat objednávku</b>.</p>
+    <p>Ceny jsou z Decathlonu a u tréninkových věcí už obsahují <b>potisk klubového loga (60 Kč)</b> – všichni budou mít stejné. U klubových věcí (šála, čepice) cenu ještě upřesníme.</p>
+    <p><b>Velikost:</b> dětské oblečení se vybírá podle výšky dítěte (změřte ho; když je na hranici, vezměte raději větší), štulpny podle čísla bot. Podrobné tabulky najdete v <a href="https://www.decathlon.cz/size-guide" target="_blank" rel="noopener">průvodci velikostí Decathlonu</a>.</p>
+  </div>
+  <nav class="jump" id="jump" aria-label="Sekce"></nav>
 
   <section id="cats"></section>
+
+  <section class="thanks" id="thanks" hidden></section>
 
   <form class="contact" id="form" novalidate>
     <h2>Kontakt a souhrn</h2>
@@ -110,7 +133,7 @@ footer { color: var(--muted); font-size: 14px; }
     </div>
     <label>Poznámka<textarea name="poznamka" placeholder="např. jméno a číslo na dres"></textarea></label>
     <div class="summary" id="summary"></div>
-    <div class="total"><span>Předběžně celkem <small>bez potisku</small></span><span id="total">0 Kč</span></div>
+    <div class="total"><span>Předběžně celkem <small>vč. potisku loga</small></span><span id="total">0 Kč</span></div>
     <input type="text" name="_honey" style="display:none" tabindex="-1" autocomplete="off">
     <button class="send" id="send" type="submit">Odeslat objednávku</button>
     <div class="msg" id="msg" role="status"></div>
@@ -122,7 +145,10 @@ footer { color: var(--muted); font-size: 14px; }
 
 <script>
 const UPDATED = "27. 11. 2026";
-const PRINT_DEFAULT = "+ potisk 60 Kč / 1 potisk";
+const PRINT_DEFAULT = "logo"; // product gets the club logo printed (always, same for everyone)
+const PRINT_PRICE = 60;
+const printed = p => p.print === PRINT_DEFAULT;
+const unit = p => p.price == null ? null : p.price + (printed(p) ? PRINT_PRICE : 0);
 
 // Product catalogue — add new items here. price = Decathlon price in Kč, print = price of printing (text), sizes = [label, hint]
 const KIDS_SIZES = [["113–122 cm","5–6 let"],["123–130 cm","7–8 let"],["131–140 cm","8–9 let"],["141–150 cm","10–11 let"],["151–160 cm","12–13 let"],["161–172 cm","14–15 let"]];
@@ -284,10 +310,12 @@ const qty = {}; // key "productId|size" -> count
 
 document.getElementById("stamp").textContent = "Ceny k " + UPDATED;
 
+const slug = c => "cat-" + c.normalize("NFD").replace(/[^a-zA-Z0-9]+/g, "-").toLowerCase();
 function render() {
   const cats = [...new Set(PRODUCTS.map(p => p.cat))];
+  document.getElementById("jump").innerHTML = cats.map(c => `<a href="#${slug(c)}">${esc(c)}</a>`).join("") + `<a class="go" href="#form">Objednat ↓</a>`;
   document.getElementById("cats").innerHTML = cats.map(cat => `
-    <h2>${esc(cat)}</h2>
+    <h2 id="${slug(cat)}">${esc(cat)}</h2>
     <div class="products">${PRODUCTS.filter(p => p.cat === cat).map(card).join("")}</div>`).join("");
 }
 function card(p) {
@@ -297,9 +325,10 @@ function card(p) {
       : `<div class="ph"><img src="${LOGO}" alt=""><span>${esc(p.phText || p.name)}</span></div>`}
     <div class="body">
       <h3>${esc(p.name)}</h3>
-      <div class="meta">${[p.brand, p.color].filter(Boolean).map(esc).join(" · ")}${p.url ? ` · <a href="${esc(p.url)}" target="_blank" rel="noopener">na Decathlonu</a>` : ""}</div>
-      <div class="prices"><span class="price">${p.price == null ? "cena upřesníme" : kc(p.price)}</span>${p.print ? `<span class="print">${esc(p.print)}</span>` : ""}</div>
+      <div class="meta">${[p.brand, p.color].filter(Boolean).map(esc).join(" · ")}${p.url ? ` · <a href="${esc(p.url)}" target="_blank" rel="noopener">na Decathlonu</a>` : ""}${p.sizes === KIDS_SIZES ? ` · <a class="sg" href="https://www.decathlon.cz/size-guide" target="_blank" rel="noopener">průvodce velikostí</a>` : ""}</div>
+      <div class="prices"><span class="price">${p.price == null ? "cena upřesníme" : kc(unit(p))}</span>${printed(p) ? `<span class="print">${kc(p.price)} + logo ${PRINT_PRICE} Kč</span>` : p.print ? `<span class="print">${esc(p.print)}</span>` : ""}</div>
       ${p.note ? `<div class="note">${esc(p.note)}</div>` : ""}
+      <button type="button" class="pick">Vybrat velikost a počet <span>▾</span></button>
       <div class="sizes">${p.sizes.map(([s, hint]) => {
         const k = p.id + "|" + s;
         return `<div class="size" data-k="${esc(k)}"><span>${esc(s)} <small>${esc(hint || "")}</small></span>
@@ -317,6 +346,8 @@ function setQty(row, n) {
   update();
 }
 document.addEventListener("click", e => {
+  const t = e.target.closest(".pick");
+  if (t) { const c = t.closest(".card"), open = c.classList.toggle("open"); t.firstChild.textContent = open ? "Skrýt velikosti " : "Vybrat velikost a počet "; t.lastElementChild.textContent = open ? "▴" : "▾"; return; }
   const b = e.target.closest(".qty button"); if (!b) return;
   const row = b.closest(".size");
   setQty(row, (qty[row.dataset.k] || 0) + +b.dataset.d);
@@ -329,7 +360,7 @@ function lines() {
   const out = [];
   for (const p of PRODUCTS) for (const [s] of p.sizes) {
     const n = qty[p.id + "|" + s] || 0;
-    if (n) out.push({ p, s, n, sum: p.price == null ? 0 : n * p.price });
+    if (n) out.push({ p, s, n, sum: p.price == null ? 0 : n * unit(p) });
   }
   return out;
 }
@@ -361,7 +392,8 @@ document.getElementById("form").addEventListener("submit", async e => {
   const name = f.jmeno.value.trim() + " " + f.prijmeni.value.trim();
   const d = new Date(), pad = n => String(n).padStart(2, "0");
   const orderId = String(d.getFullYear()).slice(2) + pad(d.getMonth() + 1) + pad(d.getDate()) + String(Math.floor(Math.random() * 1000)).padStart(3, "0");
-  const orderText = L.map(l => `${l.n}× ${l.p.name} (${l.p.color}) – ${l.s} – ${l.p.price == null ? "cena upřesníme" : kc(l.sum)}`).join("\n");
+  const orderText = L.map(l => `${l.n}× ${l.p.name} (${l.p.color}) – ${l.s} – ${l.p.price == null ? "cena upřesníme" : kc(l.sum)}${printed(l.p) ? " vč. loga" : ""}`).join("\n");
+  const hasUnpriced = L.some(l => l.p.price == null);
   const data = {
     _subject: `Objednávka oblečení č. ${orderId} – ${name} (${kc(total)})`,
     "Číslo objednávky": orderId,
@@ -375,7 +407,9 @@ document.getElementById("form").addEventListener("submit", async e => {
     _replyto: f.email.value.trim(),
     "Hráč / tým": f.hrac.value.trim(),
     "Objednávka": orderText,
-    "Celkem bez potisku": kc(total),
+    "Předběžně celkem (vč. potisku loga)": kc(total) + (hasUnpriced ? " + šála/čepice (cena upřesníme)" : ""),
+    email: f.email.value.trim(),
+    _autoresponse: `Dobrý den,\n\nděkujeme za objednávku oblečení SK Postřižín č. ${orderId}.\n\n${orderText}\n\nPředběžně celkem: ${kc(total)} (vč. potisku loga)${hasUnpriced ? ", šála/čepice – cena bude upřesněna" : ""}.\n\nCo bude dál: po uzávěrce objednávek spočítáme finální cenu a pošleme vám e-mailem QR kód k platbě na účet klubu. Do platby prosím uveďte číslo objednávky ${orderId} (v QR kódu bude jako variabilní symbol).\n\nSportovní klub Postřižín`,
     "Poznámka": f.poznamka.value.trim()
   };
   btn.disabled = true; msg.className = "msg"; msg.textContent = "Odesílám…";
@@ -392,11 +426,24 @@ document.getElementById("form").addEventListener("submit", async e => {
       fetch(SHEET_FORM, { method: "POST", mode: "no-cors", body: row })
     ]);
     if (mail.status === "rejected" && sheet.status === "rejected") throw new Error("send failed");
-    msg.className = "msg ok";
-    msg.textContent = `Díky, objednávka č. ${orderId} odeslána (${kc(total)} bez potisku). Trenér se vám ozve s platbou.`;
+    msg.textContent = "";
+    const th = document.getElementById("thanks");
+    th.innerHTML = `<h2>Děkujeme, objednávka č. ${orderId} je odeslaná</h2>
+      <div class="summary">${L.map(l => `<div class="row"><span>${l.n}× ${esc(l.p.name)} – ${esc(l.s)}</span><span>${l.p.price == null ? "cena upřesníme" : kc(l.sum)}</span></div>`).join("")}</div>
+      <div class="total"><span>Předběžně celkem <small>vč. potisku loga</small></span><span>${kc(total)}</span></div>
+      <div><b>Co bude dál</b></div>
+      <ol>
+        <li>Shrnutí objednávky vám přijde e-mailem na <b>${esc(f.email.value.trim())}</b>.</li>
+        <li>Po uzávěrce objednávek spočítáme <b>finální cenu</b>${hasUnpriced ? " (včetně šály / čepice)" : ""}.</li>
+        <li>Pošleme vám e-mailem <b>QR kód k platbě</b> na transparentní účet klubu – číslo objednávky ${orderId} v něm bude jako variabilní symbol.</li>
+      </ol>
+      <button type="button" class="again">Objednat další</button>`;
+    th.querySelector(".again").onclick = () => { th.hidden = true; f.hidden = false; document.getElementById("cats").hidden = false; document.getElementById("jump").hidden = false; window.scrollTo(0, 0); };
     f.reset();
     document.querySelectorAll(".size").forEach(row => { qty[row.dataset.k] = 0; row.querySelector("input").value = 0; row.classList.remove("on"); });
     update();
+    f.hidden = true; document.getElementById("cats").hidden = true; document.getElementById("jump").hidden = true;
+    th.hidden = false; th.scrollIntoView({ behavior: "smooth" });
   } catch (err) {
     msg.className = "msg err";
     msg.textContent = "Odeslání se nepovedlo, zkuste to prosím znovu za chvíli.";
