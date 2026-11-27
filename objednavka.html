@@ -110,6 +110,9 @@ label textarea { min-height: 70px; resize: vertical; }
 .bar a { color: inherit; }
 @media (prefers-color-scheme: dark) { .bar { color: #0f1612; } }
 .bar[hidden] { display: none; }
+.contact[hidden], #cats[hidden] { display: none; }
+.total span:last-child { text-transform: none; white-space: nowrap; }
+@media (prefers-color-scheme: dark) { .lockrow button, .pick, .jump a:hover, .jump a.go { color: #0f1612; } }
 footer { color: var(--muted); font-size: 14px; }
 </style>
 </head>
@@ -130,7 +133,7 @@ footer { color: var(--muted); font-size: 14px; }
     <p class="deadline" id="deadline">Objednávky přijímáme do <b>31. 12. 2026</b>.</p>
     <p class="joma"><b>Hlavní klubové oblečení je Joma</b> (vycházková kolekce). Věci z Decathlonu na této stránce jsou doplněk navíc – jen na tréninky.</p>
     <p>U každého produktu vyplňte počet kusů v jednotlivých velikostech, dole doplňte kontakt a klikněte na <b>Odeslat objednávku</b>.</p>
-    <p>Ceny jsou z Decathlonu a u tréninkových věcí už obsahují <b>potisk klubového loga (60 Kč)</b> – všichni budou mít stejné. U klubových věcí (šála, čepice) cenu ještě upřesníme.</p>
+    <p>Ceny jsou z Decathlonu a u tréninkových věcí už obsahují <b>potisk klubového loga</b> (odhad 60 Kč za kus, přesnou cenu potisku upřesníme) – všichni budou mít stejné. U klubových věcí (šála, čepice) cenu ještě upřesníme.</p>
     <p class="sleva"><b>Máme domluvenou slevu</b> – ceny na stránce jsou proto jen orientační a výsledná cena bude nižší. Přesnou částku budeme znát až z faktury.</p>
     <p><b>Velikost:</b> dětské oblečení se vybírá podle výšky dítěte (změřte ho; když je na hranici, vezměte raději větší), štulpny podle čísla bot. Podrobné tabulky najdete v <a href="https://www.decathlon.cz/size-guide" target="_blank" rel="noopener">průvodci velikostí Decathlonu</a>.</p>
   </div>
@@ -279,7 +282,7 @@ const PRODUCTS = [
     brand: "Kipsta",
     color: "kouřová černá",
     price: 119,
-    print: "bez potisku",
+    print: PRINT_DEFAULT,
     note: "Velikost podle čísla bot.",
     url: "https://www.decathlon.cz/p/detske-stulpny-viralto-prouzkovane/309733/c382m8560703",
     img: "https://contents.mediadecathlon.com/p2970422/k$dfde65e557354c88bf6e0320ec79d2f2/picture.jpg?format=auto&f=800x0",
@@ -288,7 +291,7 @@ const PRODUCTS = [
   {
     id: "club100-batoh-17",
     cat: "Doplňky",
-    name: "Sportovní batoh Club 100 17 l",
+    name: "Sportovní batoh Club 100",
     brand: "Kipsta",
     color: "kouřová černá",
     price: 249,
@@ -338,7 +341,7 @@ const qty = {}; // key "productId|size" -> count
 let coachUnlocked = false;
 
 // Coach-only products are shipped encrypted (AES-GCM, key from the coach password via PBKDF2) so they are not readable without it
-const COACH_BLOB = "99gTW3OsozJecpHwmOe860dfWd+sNKd3G/pIh1fXFrfOj1PUGY+0Nv0Sh9vHybg4t5mzDI4ygtuBykGKesFA1IGGg9ov1xD5XiIZbkcROKMGDS4rewWTDQCoweb+0x2PdvWHN3digonAep+u8hUxgaZ/wP6d5le9uL/hqmIXt/59dK9Uihv4C3ea49EXxrcrCGSNwFp5RzoS/HR+FeY0EGKf2MdhaTesl1FhApHSMmcp/ggw/mRW/uj9ID/isA1mftwHgxXxGAB/U/lg8V+wBCY74iuIvvmw+D4/7CJHH8r92ovvepD2TYdQ2g1y0GOUsMqgwrrtsbXmT6CIe468OiuMfekdnGydIwYjBqLX9LXPPJ3VaN2OjaAM8QLufdjBQHuquNt5jz+yu1VbS2rpy/l3HUnG/kCWIbbMCBGADt+t/x5FoEM35G+zQmofjIhKE6PX/5sFVt7XdWXOkbpPnJ+J6Mchc5tcYb6pyX/3u+miw3J8pfCIwV6Q0Kcx74rRWC98VyC/K8E62iBbBeJhtEHVEOG/u/eQohnUKDDznDZFwf0ya57EYJgDbULU2dxPb4bUQty9twJJhzoceFEscwEwZSGWVOBzPpP9on/K0phP0wMlrwpK4nPSLVmVpXZEERFt393uvhIJON8tFnM/PM+jAI9x+E6fs8aQrN+0FH92wPbNLRoLh80yYUtnDDoT579BQURdqd6c3KoFyDPEpOTbra4u3PXHeyyjUsDZ85r6Jpa1d7FuPkns5xWbW1FvjV6vQn/vG69X8Z82pg4z5k0xF8qnYd/zyKDWQBunTXylMyJ4sh5llEbZdWnOBHHWlcXlTkdcI+NpUWi+As3fpn2pvEN8SWu55TyvVKpVo97ezPg57TBDOr63mVunLEIEHWEQrlWAK72d8fKm7v5VIOgkTnjNYmxEvd3pcEqxztcQVAJMtM6mQ+v1kha4g6WYroHNDYA0jHC/gASUnvhXGoEnQm+LmSOttwy2X67Y201DCYwmG6S+A1R3Xg/t+pAA3bp96k0hKf9pyi7tR064yXYh2wBavdWuRc/VorBSYFgnt6fagzRNuhdsCesXwk/dTwevLYSkz0KH00YUQyaSHEcLRftr0++eVbSZ7jen4MXt7Nyucih8eO0xkn8OWkHcbSt7eLFFE/wibjSpPbAbyACVfnKzCl188oCPL4Gcy1Jis208ct4w1kn18j5ovdn5Gr3XeVGAatuoTY7huW1PxVScKnKwOY3JHlXMMDplHoji+rZYlXmmzPFXDd63qvjGb3inb4J7dTzB+zV+Kt3EewSxk/kHYbB3/pjmystz1qdNWvmpTEgGENOqf/ReyxjrobI630vRPNPU1YLlg60/oH8yiO72AC96IEWMSUE5nynYqGQ7ldaZuMAvl75ET8pJO/wrM7tBRJ1xpZFAKjL07iS28CUjDsoapcAdz+HeiJuiRngu8e6zaIZc8ZLHgnt3GQyIf+DalHcleG4J";
+const COACH_BLOB = "VIT2ilIbhEV1wrlqXJ1MBNQg0yp3zaiG4zBfkXpXoKiNEVZyEOUqAbo34vNc87l94eUDQoXL77QW36K6TlAmkNeSIW4pwgOrSPNv7rKhBA0ppQCmNY2dBoK3snlmjxPvdh0P8xmcmOlU2XcoizIIryLDkC3PtTApmcimDKY+GEpwRuCG/hk9o+1yP2toKP1wd3LhhNfloWyfoAppSsTbO0BET5q3kowYNZ0G5lX8lXoj6Dd/4hGj52Y6Evq3SKsXseE4pUhtNA80Ut25HCfXrMjQQ5fiWo3Y4lfIZBsCiT7yggbOHm7tSTpbI1R6hyUl0uocp8xpKvHfs4tAdrc52JmetLQDkdcXgiGo3amu3IvovCVrgUDx5L367bE0khgXVy5wKVffTa8wiWfiKTfLt39x97BhejQg2h/qnACojw7H3kUtcUMU0v7XCdXDukO3A3glw3D6HdlkOJQmByqQtM4Bnm5fuswf1M81S4IRoo0ObvFhjC59hiCR+4XcDkkfy4R6fdyspIExsFuEuC7Wk7S+2xunMJFIf9YQ3CKen/K1efPEkrytPylFOS9QAhWoQ5htyrJNjZu4neyhJlokgpodFK9mNCkZry9VzvKKyoHQT4gebEWWvngFe3WOUt0GkvGX1wGaHb8zKhcDsatg+CMHTg+9zG0bR1bWp6gj9wobIUyt+FFsSiqgNoPfNLWGvR7LQrAZJWLfZPgRR0xTtpcAd8HskEhWFzYg+o+iRzcOZhP5FQR2qItRv353rDwjjz9eNtDgliGxPNBgK8luhcxFKr4Pun8ZZvEXYvu6IJ+VLAR+4KMJ2LLejlR0EdV9JEfA9WbWFFsUc5L+6O/BISdJLdmP2Mt8qK4GBqa9EvELxdjq+LYgvuSVRCYTkuyRsPcqC1pKMzfqoIHayWXXzVLmSPUH8nJRjavD5730bX1pKELENHOzpAJZdcy9Mvkd5TE5G1wZV/dUsQDspT2ewl6JY+FmhVg5PDlugeTp0S7jyZTHaGuRfT4wKiOWu1ohfbYnWp5lw2p3uwx2Cw1H0J/zbSLkA9T3jWrsgSQFu9A+OKxozdu2u3jInzvM8QCFedlq/8Kkx2idPWkS6lQVQsY2t2f6X/UcO2Lq1AYeNWb1PawgLa4qVRG1m61wRLNer3ptPZCCaz9zewkuUja36AhCqrnnGUbA+NC0qNYAKlNG9dJFCksNWYhX+jggMy+rEAdcCg+pfkuZApqmzn3sbHq/wIpOJ0SuCT1URmF+RWvfz5VSrq0tP3+fIRau3YzPuyNJsJY4dMylQ1qQPRFHFPONr6a7eXUQDDIrhUNonIuq1+PAwnQeW0p1yAxUJsBFBNg63+VfXvAC/zgq+e9skIgNl2nVHb1tUnV/URwAcLgduoxWm0AKPIdcVT/ufwoSc7HKfulwqjA2NKkyMHCWDf26TINRd67hwzqLsCQG3RljWWtBMB5eGN2jyYDJG0TAh8gXZtEQfxcmY5Ap";
 const normPass = s => s.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().replace(/\s+/g, "");
 async function unlockCoach(pass) {
   const raw = Uint8Array.from(atob(COACH_BLOB), c => c.charCodeAt(0));
@@ -374,7 +377,7 @@ function card(p) {
     <div class="body">
       <h3>${esc(p.name)}</h3>
       <div class="meta">${[p.brand, p.color].filter(Boolean).map(esc).join(" · ")}${p.url ? ` · <a href="${esc(p.url)}" target="_blank" rel="noopener">na Decathlonu</a>` : ""}${p.sizes === KIDS_SIZES ? ` · <a class="sg" href="https://www.decathlon.cz/size-guide" target="_blank" rel="noopener">průvodce velikostí</a>` : ""}</div>
-      <div class="prices"><span class="price">${p.price == null ? "cena upřesníme" : kc(unit(p))}</span>${printed(p) ? `<span class="print">${kc(p.price)} + logo ${PRINT_PRICE} Kč</span>` : p.print ? `<span class="print">${esc(p.print)}</span>` : ""}</div>
+      <div class="prices"><span class="price">${p.price == null ? "cena upřesníme" : kc(unit(p))}</span>${printed(p) ? `<span class="print">${kc(p.price)} + logo ~${PRINT_PRICE} Kč</span>` : p.print ? `<span class="print">${esc(p.print)}</span>` : ""}</div>
       ${p.note ? `<div class="note">${esc(p.note)}</div>` : ""}
       <button type="button" class="pick">Vybrat velikost a počet <span>▾</span></button>
       <div class="sizes">${p.sizes.map(([s, hint]) => {
@@ -439,7 +442,7 @@ document.getElementById("form").addEventListener("submit", async e => {
   const total = L.reduce((a, l) => a + l.sum, 0);
   const name = f.jmeno.value.trim() + " " + f.prijmeni.value.trim();
   const d = new Date(), pad = n => String(n).padStart(2, "0");
-  const orderId = String(d.getFullYear()).slice(2) + pad(d.getMonth() + 1) + pad(d.getDate()) + String(Math.floor(Math.random() * 1000)).padStart(3, "0");
+  const orderId = String(d.getFullYear() % 10) + pad(d.getMonth() + 1) + pad(d.getDate()) + String(d.getHours() * 3600 + d.getMinutes() * 60 + d.getSeconds()).padStart(5, "0"); // 10 číslic = VS, unikátní na sekundu
   const orderText = L.map(l => `${l.n}× ${l.p.name} (${l.p.color}) – ${l.s} – ${l.p.price == null ? "cena upřesníme" : kc(l.sum)}${printed(l.p) ? " vč. loga" : ""}`).join("\n");
   const hasUnpriced = L.some(l => l.p.price == null);
   const data = {
@@ -456,15 +459,13 @@ document.getElementById("form").addEventListener("submit", async e => {
     "Hráč / tým": f.hrac.value.trim(),
     "Objednávka": orderText,
     "Předběžně celkem (vč. potisku loga)": kc(total) + (hasUnpriced ? " + šála/čepice (cena upřesníme)" : ""),
-    email: f.email.value.trim(),
-    _autoresponse: `Dobrý den,\n\nděkujeme za objednávku oblečení SK Postřižín č. ${orderId}.\n\n${orderText}\n\nPředběžně celkem: ${kc(total)} (vč. potisku loga)${hasUnpriced ? ", šála/čepice – cena bude upřesněna" : ""}.\n\nNa oblečení máme domluvenou slevu, takže výsledná cena bude nižší – přesnou částku budeme znát až z faktury.\n\nCo bude dál: po uzávěrce objednávek (${DEADLINE_TXT}) spočítáme podle faktury finální cenu a pošleme vám e-mailem QR kód k platbě na účet klubu. Do platby prosím uveďte číslo objednávky ${orderId} (v QR kódu bude jako variabilní symbol).\n\nSportovní klub Postřižín`,
     "Poznámka": f.poznamka.value.trim()
   };
   btn.disabled = true; msg.className = "msg"; msg.textContent = "Odesílám…";
   const row = new URLSearchParams({
     [SHEET_FIELDS.jmeno]: data["Jméno"], [SHEET_FIELDS.prijmeni]: data["Příjmení"], [SHEET_FIELDS.email]: data["E-mail"],
     [SHEET_FIELDS.hrac]: data["Hráč / tým"], [SHEET_FIELDS.objednavka]: orderText, [SHEET_FIELDS.poznamka]: data["Poznámka"],
-    [SHEET_FIELDS.polozky]: JSON.stringify({ id: orderId, items: L.map(l => ({ p: l.p.id, s: l.s, n: l.n, price: l.p.price })) }),
+    [SHEET_FIELDS.polozky]: JSON.stringify({ id: orderId, items: L.map(l => ({ p: l.p.id, s: l.s, n: l.n, price: l.p.price, print: printed(l.p), unit: unit(l.p) })) }),
     [SHEET_FIELDS.celkem]: String(total)
   });
   try {
@@ -481,8 +482,8 @@ document.getElementById("form").addEventListener("submit", async e => {
       <div class="total"><span>Předběžně celkem <small>vč. potisku loga, před slevou</small></span><span>${kc(total)}</span></div>
       <div><b>Co bude dál</b></div>
       <ol>
-        <li>Shrnutí objednávky vám přijde e-mailem na <b>${esc(f.email.value.trim())}</b>.</li>
-        <li>Po uzávěrce objednávek (${DEADLINE_TXT}) spočítáme podle faktury <b>finální cenu</b> – máme domluvenou slevu, takže bude nižší${hasUnpriced ? " (včetně šály / čepice)" : ""}.</li>
+        <li>Shrnutí objednávky vám do pár minut přijde e-mailem na <b>${esc(f.email.value.trim())}</b>.</li>
+        <li>Po uzávěrce objednávek (${DEADLINE_TXT}) spočítáme podle faktury <b>finální cenu</b> – máme domluvenou slevu, takže bude nižší.${hasUnpriced ? " Doplníme i cenu šály / čepice." : ""}</li>
         <li>Pošleme vám e-mailem <b>QR kód k platbě</b> na transparentní účet klubu – číslo objednávky ${orderId} v něm bude jako variabilní symbol.</li>
       </ol>
       <button type="button" class="again">Objednat další</button>`;
@@ -506,12 +507,6 @@ document.getElementById("coachForm").addEventListener("submit", async e => {
   catch { m.textContent = "Špatné heslo."; }
 });
 try { const sp = sessionStorage.getItem("coachPass"); if (sp) unlockCoach(sp).catch(() => sessionStorage.removeItem("coachPass")); } catch {}
-if (new Date() >= DEADLINE) {
-  document.getElementById("deadline").innerHTML = `Objednávky byly uzavřeny ${DEADLINE_TXT}. Děkujeme!`;
-  document.getElementById("form").hidden = true;
-  document.querySelectorAll(".qty button, .qty input").forEach(el => el.disabled = true);
-  document.querySelector('#jump a[href="#form"]')?.remove();
-}
 </script>
 </body>
 </html>
