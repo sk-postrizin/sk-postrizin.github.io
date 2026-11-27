@@ -31,7 +31,8 @@ h1 { font-family: var(--display); font-weight: 800; font-size: clamp(34px, 6vw, 
 .intro p { margin: 0; }
 .deadline { font: 700 20px var(--display); text-transform: uppercase; letter-spacing: .02em; color: #0f1612; background: #5cc47c; border-radius: 6px; padding: 8px 12px; justify-self: start; }
 .deadline b { font-weight: 800; }
-.joma { border-left: 4px solid var(--pitch); padding: 4px 0 4px 10px; }
+.sleva { font-size: .95em; }
+    .joma { border-left: 4px solid var(--pitch); padding: 4px 0 4px 10px; }
 .intro a, .meta a.sg { color: var(--pitch); }
 .jump { position: sticky; top: 0; z-index: 5; display: flex; flex-wrap: wrap; gap: 8px; padding: 10px 0; background: var(--bg); }
 .jump[hidden] { display: none; }
@@ -130,6 +131,7 @@ footer { color: var(--muted); font-size: 14px; }
     <p class="joma"><b>Hlavní klubové oblečení je Joma</b> (vycházková kolekce). Věci z Decathlonu na této stránce jsou doplněk navíc – jen na tréninky.</p>
     <p>U každého produktu vyplňte počet kusů v jednotlivých velikostech, dole doplňte kontakt a klikněte na <b>Odeslat objednávku</b>.</p>
     <p>Ceny jsou z Decathlonu a u tréninkových věcí už obsahují <b>potisk klubového loga (60 Kč)</b> – všichni budou mít stejné. U klubových věcí (šála, čepice) cenu ještě upřesníme.</p>
+    <p class="sleva"><b>Máme domluvenou slevu</b> – ceny na stránce jsou proto jen orientační a výsledná cena bude nižší. Přesnou částku budeme znát až z faktury.</p>
     <p><b>Velikost:</b> dětské oblečení se vybírá podle výšky dítěte (změřte ho; když je na hranici, vezměte raději větší), štulpny podle čísla bot. Podrobné tabulky najdete v <a href="https://www.decathlon.cz/size-guide" target="_blank" rel="noopener">průvodci velikostí Decathlonu</a>.</p>
   </div>
   <nav class="jump" id="jump" aria-label="Sekce"></nav>
@@ -157,7 +159,7 @@ footer { color: var(--muted); font-size: 14px; }
     </div>
     <label>Poznámka<textarea name="poznamka" placeholder="např. jméno a číslo na dres"></textarea></label>
     <div class="summary" id="summary"></div>
-    <div class="total"><span>Předběžně celkem <small>vč. potisku loga</small></span><span id="total">0 Kč</span></div>
+    <div class="total"><span>Předběžně celkem <small>vč. potisku loga, před slevou</small></span><span id="total">0 Kč</span></div>
     <input type="text" name="_honey" style="display:none" tabindex="-1" autocomplete="off">
     <button class="send" id="send" type="submit">Odeslat objednávku</button>
     <div class="msg" id="msg" role="status"></div>
@@ -336,7 +338,7 @@ const qty = {}; // key "productId|size" -> count
 let coachUnlocked = false;
 
 // Coach-only products are shipped encrypted (AES-GCM, key from the coach password via PBKDF2) so they are not readable without it
-const COACH_BLOB = "Rr3bJgxAT71N7mqNE31FHaDiRrwH3+sPyu8JCDizcsZhaNpBmYRWdXM7/I0g9EI60C3juZSqU5SgZxaotaNJv6B9KjJu3E7ic0h4vyP8RXwctvglwdYgO59Ti4wFsScirYNoDkpQIvaMl0Gn4FddCbGH2rq4ZNXJR8FDJrgBzFJbTKGwd+wPzZ7mEmfSB6r2jr+FZm82FfGhBPYMu2WDrEwVj5CM4QMbt+PebKcCVt2LRbmr1S2kR/OQjqGAkkdNXZ8EDwlORQdVdGAsTbQdLqkgSTPuyU3F8NHZOM/zIz8FWlTLjNC6BxC4MdkXqG0ruv+WZXuAGGn90W859ssTd7e1l0DmHvU3aAI8vhfnaE3VHQ5jJKdk0OBAjztht/vnzNSW3wyvIdXuMMVNJVhBaERDWmvDUoREXPIf8IOV/Vhjw8POrZ/bU0Wncxl5lHFwvwO2dxxz49JkPModjTYioaFwtpZshjR2EJ0dl2rr/D3sZkaeQgBwkLVUdoKcqw4Vjem77YmZflOleZzPmXUeElyxE6a4NFK7zkIoy+MiAbhe45AfDu3PDvCj7tiTQxOk/Bj5VAf4nUM4b7g39ZVe9B0sI48IFJZwYuZiWofqWRgNSV8Qx+xDG+qjOHZbxnHm5n5//Hai0NEOMTNIhaMzivFkK3NBNbAOL64nWX7CnzMwiAPIrFkzs2oTyKyrZw5P33mDsHxssWO7NAWyDJyzkuxzV4cnfwajI4Hi6hnfKp26CXJVPch9xtm4AqT6VP8uftUv0Ih5+xyCzdVoM3UahrsV/s15t0wNTbiP4wxvwYJxqTynKdT/N+DkTPLd9ieUWsaI5k9AuJAxi188274Zgd7dCBqSSYqnRaWRJRZTGyCS6/s++VdWVPGja0cCz3AyQ+eBZ/Z2T5dbPibpAM/CLMGbA/FpBSFDeD0zdRwGPWTLoW9I96ZTqeIyuHjtjHot53roslftTAkCdSKQHcXlgAntmDC0HojmrZy5DlwiS7WISW/64Gg3oHhK++QOFdw6UbRcUzQnd3Cqv+6qbq6nTQ7kbeGwFwKYCowqTTWhjyDhla0pG3q5yOHkQ/3m1rR8dT8tcLSzgpASQqeeJQHHd4I94tK0l4Yd9dmdPsrlmcRItpmLhtH1J7HUIXS0fWvKPGOX9dPOFZBb+dJfj5/ipWETBrlJu1PD6VcXrHMuYX0sLcCft+VzY4cIFpT/qySHYMSuQ7+2uF2VU+GsVpaV+wd5F4TqWA+gW/AKgd+Kt4FH9BP4GJOSVZUQ++GmGmHqjZVrIy35+LHKTuZZbKb2N4F6sHQN5TfAOfDP3utyjbpFdiNF5/CLTnpOyoXIdOwkhJF9DQCEUH8tFD7FiUWKh3rPj6J2U6pCjjS1m3EAboH6h5C97k17HpMBDEQonZq/w8Bu9oMQW8xKbRDYD52yzxd5MdeZj3b4wipEWioUdr1wzZuF2cHnv/KiK8LWYbSMZ41yZYchSZvUdmFU";
+const COACH_BLOB = "99gTW3OsozJecpHwmOe860dfWd+sNKd3G/pIh1fXFrfOj1PUGY+0Nv0Sh9vHybg4t5mzDI4ygtuBykGKesFA1IGGg9ov1xD5XiIZbkcROKMGDS4rewWTDQCoweb+0x2PdvWHN3digonAep+u8hUxgaZ/wP6d5le9uL/hqmIXt/59dK9Uihv4C3ea49EXxrcrCGSNwFp5RzoS/HR+FeY0EGKf2MdhaTesl1FhApHSMmcp/ggw/mRW/uj9ID/isA1mftwHgxXxGAB/U/lg8V+wBCY74iuIvvmw+D4/7CJHH8r92ovvepD2TYdQ2g1y0GOUsMqgwrrtsbXmT6CIe468OiuMfekdnGydIwYjBqLX9LXPPJ3VaN2OjaAM8QLufdjBQHuquNt5jz+yu1VbS2rpy/l3HUnG/kCWIbbMCBGADt+t/x5FoEM35G+zQmofjIhKE6PX/5sFVt7XdWXOkbpPnJ+J6Mchc5tcYb6pyX/3u+miw3J8pfCIwV6Q0Kcx74rRWC98VyC/K8E62iBbBeJhtEHVEOG/u/eQohnUKDDznDZFwf0ya57EYJgDbULU2dxPb4bUQty9twJJhzoceFEscwEwZSGWVOBzPpP9on/K0phP0wMlrwpK4nPSLVmVpXZEERFt393uvhIJON8tFnM/PM+jAI9x+E6fs8aQrN+0FH92wPbNLRoLh80yYUtnDDoT579BQURdqd6c3KoFyDPEpOTbra4u3PXHeyyjUsDZ85r6Jpa1d7FuPkns5xWbW1FvjV6vQn/vG69X8Z82pg4z5k0xF8qnYd/zyKDWQBunTXylMyJ4sh5llEbZdWnOBHHWlcXlTkdcI+NpUWi+As3fpn2pvEN8SWu55TyvVKpVo97ezPg57TBDOr63mVunLEIEHWEQrlWAK72d8fKm7v5VIOgkTnjNYmxEvd3pcEqxztcQVAJMtM6mQ+v1kha4g6WYroHNDYA0jHC/gASUnvhXGoEnQm+LmSOttwy2X67Y201DCYwmG6S+A1R3Xg/t+pAA3bp96k0hKf9pyi7tR064yXYh2wBavdWuRc/VorBSYFgnt6fagzRNuhdsCesXwk/dTwevLYSkz0KH00YUQyaSHEcLRftr0++eVbSZ7jen4MXt7Nyucih8eO0xkn8OWkHcbSt7eLFFE/wibjSpPbAbyACVfnKzCl188oCPL4Gcy1Jis208ct4w1kn18j5ovdn5Gr3XeVGAatuoTY7huW1PxVScKnKwOY3JHlXMMDplHoji+rZYlXmmzPFXDd63qvjGb3inb4J7dTzB+zV+Kt3EewSxk/kHYbB3/pjmystz1qdNWvmpTEgGENOqf/ReyxjrobI630vRPNPU1YLlg60/oH8yiO72AC96IEWMSUE5nynYqGQ7ldaZuMAvl75ET8pJO/wrM7tBRJ1xpZFAKjL07iS28CUjDsoapcAdz+HeiJuiRngu8e6zaIZc8ZLHgnt3GQyIf+DalHcleG4J";
 const normPass = s => s.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().replace(/\s+/g, "");
 async function unlockCoach(pass) {
   const raw = Uint8Array.from(atob(COACH_BLOB), c => c.charCodeAt(0));
@@ -455,7 +457,7 @@ document.getElementById("form").addEventListener("submit", async e => {
     "Objednávka": orderText,
     "Předběžně celkem (vč. potisku loga)": kc(total) + (hasUnpriced ? " + šála/čepice (cena upřesníme)" : ""),
     email: f.email.value.trim(),
-    _autoresponse: `Dobrý den,\n\nděkujeme za objednávku oblečení SK Postřižín č. ${orderId}.\n\n${orderText}\n\nPředběžně celkem: ${kc(total)} (vč. potisku loga)${hasUnpriced ? ", šála/čepice – cena bude upřesněna" : ""}.\n\nCo bude dál: po uzávěrce objednávek (${DEADLINE_TXT}) spočítáme finální cenu a pošleme vám e-mailem QR kód k platbě na účet klubu. Do platby prosím uveďte číslo objednávky ${orderId} (v QR kódu bude jako variabilní symbol).\n\nSportovní klub Postřižín`,
+    _autoresponse: `Dobrý den,\n\nděkujeme za objednávku oblečení SK Postřižín č. ${orderId}.\n\n${orderText}\n\nPředběžně celkem: ${kc(total)} (vč. potisku loga)${hasUnpriced ? ", šála/čepice – cena bude upřesněna" : ""}.\n\nNa oblečení máme domluvenou slevu, takže výsledná cena bude nižší – přesnou částku budeme znát až z faktury.\n\nCo bude dál: po uzávěrce objednávek (${DEADLINE_TXT}) spočítáme podle faktury finální cenu a pošleme vám e-mailem QR kód k platbě na účet klubu. Do platby prosím uveďte číslo objednávky ${orderId} (v QR kódu bude jako variabilní symbol).\n\nSportovní klub Postřižín`,
     "Poznámka": f.poznamka.value.trim()
   };
   btn.disabled = true; msg.className = "msg"; msg.textContent = "Odesílám…";
@@ -476,11 +478,11 @@ document.getElementById("form").addEventListener("submit", async e => {
     const th = document.getElementById("thanks");
     th.innerHTML = `<h2>Děkujeme, objednávka č. ${orderId} je odeslaná</h2>
       <div class="summary">${L.map(l => `<div class="row"><span>${l.n}× ${esc(l.p.name)} – ${esc(l.s)}</span><span>${l.p.price == null ? "cena upřesníme" : kc(l.sum)}</span></div>`).join("")}</div>
-      <div class="total"><span>Předběžně celkem <small>vč. potisku loga</small></span><span>${kc(total)}</span></div>
+      <div class="total"><span>Předběžně celkem <small>vč. potisku loga, před slevou</small></span><span>${kc(total)}</span></div>
       <div><b>Co bude dál</b></div>
       <ol>
         <li>Shrnutí objednávky vám přijde e-mailem na <b>${esc(f.email.value.trim())}</b>.</li>
-        <li>Po uzávěrce objednávek (${DEADLINE_TXT}) spočítáme <b>finální cenu</b>${hasUnpriced ? " (včetně šály / čepice)" : ""}.</li>
+        <li>Po uzávěrce objednávek (${DEADLINE_TXT}) spočítáme podle faktury <b>finální cenu</b> – máme domluvenou slevu, takže bude nižší${hasUnpriced ? " (včetně šály / čepice)" : ""}.</li>
         <li>Pošleme vám e-mailem <b>QR kód k platbě</b> na transparentní účet klubu – číslo objednávky ${orderId} v něm bude jako variabilní symbol.</li>
       </ol>
       <button type="button" class="again">Objednat další</button>`;
