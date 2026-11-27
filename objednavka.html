@@ -177,7 +177,7 @@ footer { color: var(--muted); font-size: 14px; }
     </div>
     <label>Poznámka<textarea name="poznamka"></textarea></label>
     <div class="summary" id="summary"></div>
-    <div class="total"><span>Předběžně celkem <small>vč. potisku loga, před slevou</small></span><span id="total">0 Kč</span></div>
+    <div class="total"><span>Předběžně celkem <small id="totalNote">vč. potisku loga</small></span><span id="total">0 Kč</span></div>
     <input type="text" name="_honey" style="display:none" tabindex="-1" autocomplete="off">
     <button class="send" id="send" type="submit">Odeslat objednávku</button>
     <div class="msg" id="msg" role="status"></div>
@@ -372,7 +372,7 @@ const qty = {}; // key "productId|size" -> count
 let coachUnlocked = false;
 
 // Coach-only products are shipped encrypted (AES-GCM, key from the coach password via PBKDF2) so they are not readable without it
-const COACH_BLOB = "s6fhTtT6hF7fc7yBACTwMwk+cEKsZbb4pppSxExiyfbtY9Vc0ZE/bcTPKBpcZVjU4cRo9T1DyCYct00wfrILxKpyj7sKhoPAgbBF4jGYFu/qVWk4L5MYY+R+eNjOvsRpYcljS2HPzE7luVjfksEITVwMg+oGgGH3sWvNHupDBYhh2X8D/AVXXVNF6KubhUY6Qo9TCM9e92ZgWqhnNwGC/2AMMdVXJ0cv+BLvpqe1PiqbioCErnhRCR18lYKZ2svHo8Xf+HOBIrNmcNEykpMJq4yeXxtFKjiVzTTrcjPi+BDh+x2OsG2CU4fyUbmZfqtOK/5vldqnxlAMzDNGlCqd1GPfghzNeJYhq1t337S/VSOfh+LWlj42dodkgmJfmyQeQfTbvRwuOuMC2Tx6Tm+5bXYR+E11o181SpQlfXF+mgPbobGXqAtpS9EiZMlpxNVcBI9dAX7HdZ81OkarQlEVlc3pxC2IOv37NzRgQbeNhrP9Iypm7N1OQHfIGEKHSplWQvIi1/0HZ0LKB1y1s0ABpPqzLF9nYSezs1HcifYZmW14EtYIjX5pjVDDWczt5cXcdKWmNiixvWHb4+8elLbr1OzIv9W08HF4RFMFK9hUG/zOjmasZkQovMFBlMryk6lOptX/b0ISNMcRGnl2hsK/9p5r3aZdiFCd3wLn9vEFkQEMyAMWJkAeVD9623xsYtw1lBEXtiC9KYdi6tlncQOCbwh4JygGoiDVQQIchV7TGu8Kd6on/49RHVZLhwxZA3rLmeAV7WQDlyzGYQU4UXfCd446DiS5KPFN+d1s5aRS0TBAnR+9OccSUPDPyETqLRU1mwtxiUCI8CITcYtvJaUzfqXhWcw0W1LcUfne3Ka6GJYvgRru5xTdACF0XEp4ax0tMRVCXObYz3JDT8XP4qicryFOWIzWflEiOz/NRUd5xQVCcdnoDdPnRqcYxQJ0wImBKTtOmw5tlTCKIl/xBIJOLezNmG6V6Z8JFh5YbvGmK4+2RTxIEBXdGIlSA52ZIm7uPyUefZiX0egk7waeLtyXEU2vQ5BMlYGi+EmpA4ko6B3EkmolNjHvzRFh0q6N5NcU+OZW7Ojpq5RTSQvi/OhmnRshGltGp2JRazbyAQzFKpCkOSdp+FK/j4iIf1gGjprqF/gMiNvKV9fsbl0Xs5HZ8BqxX+l3mpITyHQW9pOShq2SwyfSHeR5gQ1EvTGGESXZJKbTv5UvGvjdCYhdRKht1Lm8lPjCRACs2SptpwFf06iR9NTdtLRgiqRc3KhqD5PhqgWgP99RXXKjmAjH9RIkrXiWCFkqWFIJL1R2XUfI93t83uKZ+4IBwPAvXs7wqs/Dv5h/+oDh2dkxpGL/6Jd4slxQcT3DvBsI3VjDEZoT1uG48yIUrH1Tq5tF3j32DTn6Ieb+BGW4AWeEn6nNDZ0LdZJYy3IntMkC0mwsT771dLQWA3hef1Vu4bwFM4gumqCAKQg6HN2AvJ7yShAk";
+const COACH_BLOB = "4uD+2jbNhbEzfNd/C2BVLVc0YWGic5qZroY4MCayJIlVuH11lLAdDtZL/ABZDQKuRExjG0L1r3gx56XTYiF9lUgwfoB4F65CAkkJZiofEEGGLz4+G1dFg9PE68O1QWCF+i1nnRXIhMLa+0E1yzjJ94KPKxLb9dAOSkevP2Z2kNk6LobhgTczD0QsIzja3uUOKJweybDVNOG/eSVgXeFwODK1IwW7ilO+4Aw4bLRZnObx4+nJnwLcN15NaGzYoGodD0ummnRPlwcQwRoUym32LGMlae0pP71/10xJEmKEXqBtuAbk/I0MFsOOU8R3r4G00DPQXLwygURZHSygB5Qu1hOoBYY3oCib8o3/efjCwbEZSI8Kr588VV5NSMu5xpwwtrZmHHQ8ehFuVd8OOP3qObfn61nPws1yGBOAy8R/YN2Cz/jzbEzdBHzI4Mbyqk0zvj3VTqIaONn6TYFF2UMCG6ip/lkTnSx0cTRsPsmhS8AYzLotO/glSYTAVeHvUorarNvuD23R/wpwRySKADtQExnF4fiwceshovWIOz+yLj82ZVXOYOdGK04Gkv6YN0PxlV0dfUOWv7Zwi3F11q+jodam7ZwagsSOGRlPZ+LR9+hlN+R/6FWp/8Mb7Qh8IRSEj3ebuZhc+h3ncCEC+F0zXdC6h4XSTyX1Ira0BD1ujbewnMxJnDtt4dlKKltNOlFVGG2AV7oFEmKzKJ/ss4Cq6hRtiTESblqVE+tXVuWxIQp27vP5hxKRiRyDpa6iDY+29jcWWkIzFpOxuV8Ok4sEBDO4mECCWLlmBBdWDfx7A3o97DyVTs1KeiPYtKGfFQ18T9Ac0UB2AFudGTuUJUR63MSI7dMS/jnZlgycFIBmSLGPSQqo6iM5L2grCgPXsLC5iagLJ3zji6R/nqgM7Sk1gd7CsLgQbQqxfas++jGODE64d+UGR2zR/Vy4Duvaz5Fo9fZYV990QMzEUKiqxOxvpNu7hMAwnfio3tmtAhOGJtSAjoAzlWqwrmxvKO0d5PEJsxT24qVdHd6RdtvbslmKSibNqqf99upx8I/g7z4WfYVMJnaa9AXA3WnNj+JdPY67y2m0iEItN7lqNdf1iyqRBDA9Wl9J4L10nZuhWxm2qh995tfUmm1CBMzBoJUsfpcsklG0/A+QMWJ63j17pW/zA0AN7w1R+HCdKaip+WsQj3e7t98tJQF5TLwBQiqhOV1w9ILFZjjitZPUiPnr2cezzn7+X0pFFURRCpOQnlLzS3+Dit/M+VNGEfL2ySdk7Y80MBH4D1mVA3WnvyOdHRrVekNx6O5kDGF3qgaNgslzBKGFpBvcN6gzmmC81UaCN0v/IF1FD9MSi90NkFpUh+ASSkG3FinVlVH6mF0nLSDpOQJvODhNpFRsHZ2G1vYyEN8JCuFK1s2Da1CWLD1pCW+Lejd0c32abuDvDdG2kdNED/p4DNRLsrK7S0chMQlpKwgg0RaUgrMXbRA8lNDV";
 const normPass = s => s.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().replace(/\s+/g, "");
 async function unlockCoach(pass) {
   const raw = Uint8Array.from(atob(COACH_BLOB), c => c.charCodeAt(0));
@@ -489,6 +489,7 @@ function update() {
     ? L.map(l => `<a class="row" href="#p-${esc(l.p.id)}"><span>${l.n}× ${esc(l.p.name)} – ${esc(l.s)}</span><span>${l.p.price == null ? "cena upřesníme" : kc(l.sum)}</span></a>`).join("")
     : `<div class="meta">Zatím nic nevybráno.</div>`;
   document.getElementById("total").textContent = kc(total);
+  document.getElementById("totalNote").textContent = "vč. potisku loga" + (L.some(l => l.p.brand !== "Joma" && l.p.price != null) ? ", před slevou" : "");
   document.querySelectorAll(".card").forEach(c => {
     const n = L.filter(l => l.p.id === c.dataset.p).reduce((a, l) => a + l.n, 0);
     c.classList.toggle("picked", n > 0);
@@ -513,6 +514,7 @@ document.getElementById("form").addEventListener("submit", async e => {
   const orderId = String(d.getFullYear() % 10) + pad(d.getMonth() + 1) + pad(d.getDate()) + String(d.getHours() * 3600 + d.getMinutes() * 60 + d.getSeconds()).padStart(5, "0"); // 10 číslic = VS, unikátní na sekundu
   const orderText = L.map(l => `${l.n}× ${l.p.name} (${l.p.color}) – ${l.s} – ${l.p.price == null ? "cena upřesníme" : kc(l.sum)}${printed(l.p) ? " vč. loga" : ""}`).join("\n");
   const hasUnpriced = L.some(l => l.p.price == null);
+  const hasDeca = L.some(l => l.p.brand !== "Joma" && l.p.price != null);
   const data = {
     _subject: `Objednávka oblečení č. ${orderId} – ${name} (${kc(total)})`,
     "Číslo objednávky": orderId,
@@ -547,11 +549,11 @@ document.getElementById("form").addEventListener("submit", async e => {
     const th = document.getElementById("thanks");
     th.innerHTML = `<h2>Děkujeme, objednávka č. ${orderId} je odeslaná</h2>
       <div class="summary">${L.map(l => `<div class="row"><span>${l.n}× ${esc(l.p.name)} – ${esc(l.s)}</span><span>${l.p.price == null ? "cena upřesníme" : kc(l.sum)}</span></div>`).join("")}</div>
-      <div class="total"><span>Předběžně celkem <small>vč. potisku loga, před slevou</small></span><span>${kc(total)}</span></div>
+      <div class="total"><span>Předběžně celkem <small>vč. potisku loga${hasDeca ? ", před slevou" : ""}</small></span><span>${kc(total)}</span></div>
       <div><b>Co bude dál</b></div>
       <ol>
         <li>Shrnutí objednávky vám do pár minut přijde e-mailem na <b>${esc(f.email.value.trim())}</b>.</li>
-        <li>Po uzávěrce objednávek (${DEADLINE_TXT}) spočítáme podle faktury <b>finální cenu</b> – máme domluvenou slevu, takže bude nižší.${hasUnpriced ? " Doplníme i cenu šály / čepice." : ""}</li>
+        <li>Po uzávěrce objednávek (${DEADLINE_TXT}) ${hasDeca ? "spočítáme podle faktury <b>finální cenu</b> – u věcí z Decathlonu máme domluvenou slevu, takže bude nižší." : "potvrdíme <b>finální cenu</b>."}${hasUnpriced ? " Doplníme i cenu šály / čepice." : ""}</li>
         <li>Pošleme vám e-mailem <b>QR kód k platbě</b> na transparentní účet klubu – číslo objednávky ${orderId} v něm bude jako variabilní symbol.</li>
       </ol>
       <button type="button" class="again">Objednat další</button>`;
